@@ -4,14 +4,14 @@
 **Engine:** Unity 6.4 (URP)  
 **Genre:** Simcade Driving / Jank-Sim / Life Sim  
 
-## 📌 The Pitch
+## The Pitch
 Mistline is a first-person indie game set in the Serra Gaúcha (Southern Brazil). Think *My Summer Car* meets *Initial D*, but you are making artisanal wine to fund your underground drift addiction.
 
 The game is built on a sharp contrast: 
 - **Daytime:** Slow-paced, rural work. Driving a beat-up utility truck, tending to the vineyard, making wine, and doing local freight runs to pay the bills.
 - **Nighttime:** Taking your unfinished, RWD project car to the foggy mountain passes for underground car meets and drift runs.
 
-## 🛠️ Development Approach
+## Development Approach
 Developed as a solo project focusing on maintainable architecture. No overengineering, no ECS/DOTS. Just clean, modular C# scripts. 
 - **Input:** 100% reliant on Unity's modern Input System (`Input Actions`).
 - **Physics:** Simcade philosophy. Heavy focus on weight transfer and suspension tuning rather than hardcore mechanical simulation. Accessible but skill-based.
@@ -19,7 +19,7 @@ Developed as a solo project focusing on maintainable architecture. No overengine
 
 ---
 
-## 🗺️ Detailed Roadmap
+## Detailed Roadmap
 
 ### Phase 1: Player Foundation [Done]
 - [x] FPS Movement (Walk/Sprint/Crouch)
