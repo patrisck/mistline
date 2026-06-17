@@ -10,7 +10,8 @@ extends CharacterBody3D
 @export var jump_velocity := 4.5
 @export var ground_acceleration := 12.0
 @export var air_acceleration := 3.0
-@export var friction := 14.0
+@export var friction := 50.0
+@export var air_friction := 2.0
 
 @export_group("Camera")
 @export var mouse_sensitivity := 0.0025
@@ -76,7 +77,8 @@ func _handle_movement(delta: float) -> void:
 		var accel := ground_acceleration if is_on_floor() else air_acceleration
 		horizontal = horizontal.move_toward(direction * target_speed, accel * delta)
 	else:
-		horizontal = horizontal.move_toward(Vector3.ZERO, friction * delta)
+		var decel := friction if is_on_floor() else air_friction
+		horizontal = horizontal.move_toward(Vector3.ZERO, decel * delta)
 
 	velocity.x = horizontal.x
 	velocity.z = horizontal.z
