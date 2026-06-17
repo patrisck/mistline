@@ -1,6 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://dmistlinemain0"]
+[gd_scene load_steps=9 format=3 uid="uid://dmistlinemain0"]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
+[ext_resource type="PackedScene" path="res://scenes/InteractableLamp.tscn" id="2_lamp"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
 
@@ -40,3 +41,6 @@ shape = SubResource("WorldBoundaryShape3D_ground")
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+
+[node name="Lamp" parent="." instance=ExtResource("2_lamp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
