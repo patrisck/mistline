@@ -1,8 +1,9 @@
-[gd_scene load_steps=10 format=3 uid="uid://dmistlinemain0"]
+[gd_scene load_steps=11 format=3 uid="uid://dmistlinemain0"]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/InteractableLamp.tscn" id="2_lamp"]
 [ext_resource type="PackedScene" path="res://scenes/PickableBox.tscn" id="3_pickable"]
+[ext_resource type="PackedScene" path="res://scenes/Garage.tscn" id="4_garage"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
 
@@ -18,7 +19,7 @@ tonemap_mode = 2
 size = Vector2(50, 50)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ground"]
-albedo_color = Color(0.32, 0.34, 0.28, 1)
+albedo_color = Color(0.33, 0.33, 0.35, 1)
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_ground"]
 
@@ -40,14 +41,16 @@ material_override = SubResource("StandardMaterial3D_ground")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
 shape = SubResource("WorldBoundaryShape3D_ground")
 
+[node name="Garage" parent="." instance=ExtResource("4_garage")]
+
 [node name="Player" parent="." instance=ExtResource("1_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 3)
 
 [node name="Lamp" parent="." instance=ExtResource("2_lamp")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.8, 0, -3.2)
 
 [node name="PickableBox" parent="." instance=ExtResource("3_pickable")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 1, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4, 1.2, -2.4)
 
 [node name="PickableBox2" parent="." instance=ExtResource("3_pickable")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 1, -2)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 1.2, -2.4)
