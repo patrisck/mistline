@@ -1,0 +1,12 @@
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# Builds exportadas
+/export/
+
+# Arquivos de traducao gerados
+*.translation
+
+# Pode conter credenciais (keystore, senhas de assinatura) -- nao versionar
+export_presets.cfg
