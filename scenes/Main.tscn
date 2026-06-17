@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://dmistlinemain0"]
+[gd_scene load_steps=12 format=3 uid="uid://dmistlinemain0"]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/InteractableLamp.tscn" id="2_lamp"]
 [ext_resource type="PackedScene" path="res://scenes/PickableBox.tscn" id="3_pickable"]
 [ext_resource type="PackedScene" path="res://scenes/Garage.tscn" id="4_garage"]
+[ext_resource type="PackedScene" path="res://scenes/Vehicle.tscn" id="5_vehicle"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
 
@@ -42,6 +43,9 @@ material_override = SubResource("StandardMaterial3D_ground")
 shape = SubResource("WorldBoundaryShape3D_ground")
 
 [node name="Garage" parent="." instance=ExtResource("4_garage")]
+
+[node name="Vehicle" parent="." instance=ExtResource("5_vehicle")]
+transform = Transform3D(-1, 0, 0, 0, 1, 0, 0, 0, -1, 0, 1.1, 0)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 3)

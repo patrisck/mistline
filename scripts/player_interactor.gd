@@ -41,6 +41,9 @@ func _resolve_prompt() -> String:
 	var pickable := _target as Pickable
 	if pickable and pickable.can_pick():
 		return pickable.prompt
+	var vehicle := _target as Vehicle
+	if vehicle:
+		return "Entrar"
 	return ""
 
 
@@ -55,6 +58,10 @@ func _do_action() -> void:
 	var pickable := _target as Pickable
 	if pickable and pickable.can_pick() and carry:
 		carry.pick_up(pickable)
+		return
+	var vehicle := _target as Vehicle
+	if vehicle:
+		vehicle.enter(player)
 
 
 func _find_player() -> CharacterBody3D:

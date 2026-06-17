@@ -1,0 +1,46 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/vehicle.gd" id="1_vehicle"]
+
+[sub_resource type="BoxShape3D" id="shape_body"]
+size = Vector3(1.6, 0.4, 3.4)
+
+[sub_resource type="BoxMesh" id="mesh_body"]
+size = Vector3(1.6, 0.4, 3.4)
+
+[sub_resource type="StandardMaterial3D" id="mat_body"]
+albedo_color = Color(0.2, 0.35, 0.55, 1)
+
+[node name="Vehicle" type="RigidBody3D"]
+mass = 600.0
+can_sleep = false
+script = ExtResource("1_vehicle")
+
+[node name="BodyMesh" type="MeshInstance3D" parent="."]
+mesh = SubResource("mesh_body")
+material_override = SubResource("mat_body")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("shape_body")
+
+[node name="WheelFL" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.2, -1.3)
+target_position = Vector3(0, -0.6, 0)
+
+[node name="WheelFR" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, -0.2, -1.3)
+target_position = Vector3(0, -0.6, 0)
+
+[node name="WheelRL" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, -0.2, 1.3)
+target_position = Vector3(0, -0.6, 0)
+
+[node name="WheelRR" type="RayCast3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, -0.2, 1.3)
+target_position = Vector3(0, -0.6, 0)
+
+[node name="InteriorCamera" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.4, 0.6, -0.3)
+
+[node name="ExitPoint" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3, 0, 0)
