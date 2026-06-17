@@ -1,7 +1,8 @@
-[gd_scene load_steps=9 format=3 uid="uid://dmistlinemain0"]
+[gd_scene load_steps=10 format=3 uid="uid://dmistlinemain0"]
 
 [ext_resource type="PackedScene" path="res://scenes/Player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/InteractableLamp.tscn" id="2_lamp"]
+[ext_resource type="PackedScene" path="res://scenes/PickableBox.tscn" id="3_pickable"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_main"]
 
@@ -44,3 +45,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 
 [node name="Lamp" parent="." instance=ExtResource("2_lamp")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -2.5)
+
+[node name="PickableBox" parent="." instance=ExtResource("3_pickable")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.2, 1, -2)
+
+[node name="PickableBox2" parent="." instance=ExtResource("3_pickable")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.2, 1, -2)

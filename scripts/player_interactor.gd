@@ -1,12 +1,17 @@
 class_name PlayerInteractor
 extends RayCast3D
 
-## Detecta Interactables na mira (raycast a partir da camera) e os aciona.
+## Detecta Interactables/Pickables na mira e roteia a acao de interagir/pegar/soltar.
+## Mantem current_prompt (texto) para o HUD exibir.
 
 @export var interact_action := "interact"
 
 var player: CharacterBody3D
-var current_interactable: Interactable
+var current_prompt := ""
+
+@onready var carry: PlayerCarry = $"../Carry"
+
+var _target: Node3D
 
 
 func _ready() -> void:
@@ -17,12 +22,39 @@ func _ready() -> void:
 
 func _physics_process(_delta: float) -> void:
 	if is_colliding():
-		current_interactable = get_collider() as Interactable
+		_target = get_collider() as Node3D
 	else:
-		current_interactable = null
+		_target = null
 
-	if current_interactable and Input.is_action_just_pressed(interact_action):
-		current_interactable.interact(player)
+	current_prompt = _resolve_prompt()
+
+	if Input.is_action_just_pressed(interact_action) and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		_do_action()
+
+
+func _resolve_prompt() -> String:
+	if carry and carry.is_holding():
+		return "Soltar"
+	var interactable := _target as Interactable
+	if interactable and interactable.can_interact(player):
+		return interactable.prompt
+	var pickable := _target as Pickable
+	if pickable and pickable.can_pick():
+		return pickable.prompt
+	return ""
+
+
+func _do_action() -> void:
+	if carry and carry.is_holding():
+		carry.drop()
+		return
+	var interactable := _target as Interactable
+	if interactable and interactable.can_interact(player):
+		interactable.interact(player)
+		return
+	var pickable := _target as Pickable
+	if pickable and pickable.can_pick() and carry:
+		carry.pick_up(pickable)
 
 
 func _find_player() -> CharacterBody3D:

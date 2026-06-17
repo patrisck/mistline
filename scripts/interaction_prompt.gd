@@ -1,14 +1,13 @@
 extends Label
 
-## Mostra o prompt do Interactable atualmente na mira do jogador.
+## Mostra o prompt de acao atual resolvido pelo PlayerInteractor.
 
-@export var interactor: PlayerInteractor
+@onready var _interactor: PlayerInteractor = $"../../Head/Camera3D/Interactor"
 
 
 func _process(_delta: float) -> void:
-	var target := interactor.current_interactable if interactor else null
-	if target and target.can_interact(interactor.player):
-		text = "[E] " + target.prompt
+	if _interactor and _interactor.current_prompt != "":
+		text = "[Clique] " + _interactor.current_prompt
 		visible = true
 	else:
 		visible = false
