@@ -19,10 +19,10 @@ extends Node
 @export_group("Sol")
 @export var day_sun_color: Color = Color(0.92, 0.94, 1.0)
 @export var dusk_sun_color: Color = Color(1.0, 0.55, 0.3)
-@export var day_sun_energy: float = 1.3
+@export var day_sun_energy: float = 1.7
 
 @export_group("Ambiente / Névoa")
-@export var day_ambient_energy: float = 0.85
+@export var day_ambient_energy: float = 1.0
 @export var night_ambient_energy: float = 0.12
 @export var day_fog_color: Color = Color(0.66, 0.7, 0.76)
 @export var night_fog_color: Color = Color(0.1, 0.13, 0.2)
@@ -37,8 +37,18 @@ var _env: Environment
 
 func _ready() -> void:
 	time_of_day = start_time
+	# Resolve os nós por nome a partir do pai como fallback: NodePath exportado
+	# escrito à mão no .tscn nem sempre resolve (vinha nulo, quebrando o ciclo).
+	var root := get_parent()
+	if root != null:
+		if sun == null:
+			sun = root.get_node_or_null("Sun")
+		if world_environment == null:
+			world_environment = root.get_node_or_null("WorldEnvironment")
 	if world_environment != null:
 		_env = world_environment.environment
+	if sun == null:
+		push_warning("DayNightCycle: nó 'Sun' (DirectionalLight3D) não encontrado.")
 	_apply()
 
 
