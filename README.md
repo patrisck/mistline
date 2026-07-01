@@ -21,6 +21,9 @@ Protótipo de um **simulador de reforma automotiva** em primeira pessoa, no esti
 - **HUD** com mira que reage a alvos interativos, painel de contexto e vinheta.
 - **Atmosfera sombria** — neblina volumétrica, tonemapping AgX, iluminação de
   clima (sol frio + lâmpadas quentes de trabalho). Foco visual em luz, não em texturas.
+- **Ciclo de dia e noite** — o sol arca pelo céu mudando cor/energia da luz, do
+  ambiente e da névoa. Neblina fica **visível de dia** (cor mais clara). Duração e
+  hora inicial ajustáveis no nó `DayNightCycle`.
 - **Mapa de teste** — garagem com porta, bancada e itens espalhados.
 
 ## Controles
@@ -62,6 +65,7 @@ mistline/
 │   ├── player.gd                 # Controlador + carregar/girar item
 │   ├── hud.gd                    # HUD
 │   ├── crosshair.gd              # Mira desenhada por código (feedback de alvo)
+│   ├── day_night_cycle.gd        # Ciclo de dia/noite (sol, ambiente, névoa)
 │   └── interactables/
 │       ├── door.gd
 │       └── pickable.gd

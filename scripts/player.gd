@@ -159,9 +159,11 @@ func _pick_up(body: RigidBody3D) -> void:
 	Interaction.notify_hold_state(true)
 
 
-## Gira o alvo de orientação do item em torno do eixo vertical do mundo.
+## Gira o alvo de orientação do item "por cima" (tombando pra frente/trás),
+## em torno do eixo horizontal à direita da câmera — não mais no eixo vertical.
 func _rotate_held(direction: float) -> void:
-	_carry_basis = Basis(Vector3.UP, direction * carry_rotate_step) * _carry_basis
+	var axis := camera.global_transform.basis.x.normalized()
+	_carry_basis = Basis(axis, direction * carry_rotate_step) * _carry_basis
 	_carry_basis = _carry_basis.orthonormalized()
 
 

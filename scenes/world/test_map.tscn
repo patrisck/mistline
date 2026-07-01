@@ -1,10 +1,11 @@
-[gd_scene load_steps=21 format=3 uid="uid://f1testmap0sim01"]
+[gd_scene load_steps=22 format=3 uid="uid://f1testmap0sim01"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud"]
 [ext_resource type="PackedScene" path="res://scenes/interactables/door.tscn" id="3_door"]
 [ext_resource type="PackedScene" path="res://scenes/interactables/pickable_crate.tscn" id="4_crate"]
 [ext_resource type="PackedScene" path="res://scenes/interactables/pickable_wheel.tscn" id="5_wheel"]
+[ext_resource type="Script" path="res://scripts/day_night_cycle.gd" id="6_daynight"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
 sky_top_color = Color(0.06, 0.08, 0.12, 1)
@@ -87,6 +88,11 @@ size = Vector3(1.6, 0.9, 0.7)
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_1")
+
+[node name="DayNightCycle" type="Node" parent="."]
+script = ExtResource("6_daynight")
+sun = NodePath("../Sun")
+world_environment = NodePath("../WorldEnvironment")
 
 [node name="Sun" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.643, -0.766, 0, 0.766, 0.643, 0, 10, 0)
