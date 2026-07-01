@@ -24,6 +24,9 @@ Protótipo de um **simulador de reforma automotiva** em primeira pessoa, no esti
 - **Ciclo de dia e noite** — o sol arca pelo céu mudando cor/energia da luz, do
   ambiente e da névoa. Neblina fica **visível de dia** (cor mais clara). Duração e
   hora inicial ajustáveis no nó `DayNightCycle`.
+- **Menu de debug (`F1`)** — edita parâmetros em tempo real por sliders/toggles
+  (velocidades, sensibilidade, névoa, glow, luzes, hora do dia...) e imprime os
+  valores no console pra você cravar depois. Sistema genérico e reutilizável.
 - **Mapa de teste** — garagem com porta, bancada e itens espalhados.
 
 ## Controles
@@ -38,6 +41,7 @@ Protótipo de um **simulador de reforma automotiva** em primeira pessoa, no esti
 | Girar item segurado | **Scroll** do mouse |
 | Arremessar item | **Botão direito** do mouse |
 | Liberar/recapturar mouse | `Esc` |
+| Abrir/fechar menu de debug | `F1` |
 
 ## Como rodar
 
@@ -66,6 +70,8 @@ mistline/
 │   ├── hud.gd                    # HUD
 │   ├── crosshair.gd              # Mira desenhada por código (feedback de alvo)
 │   ├── day_night_cycle.gd        # Ciclo de dia/noite (sol, ambiente, névoa)
+│   ├── debug_menu.gd             # Autoload: menu de debug genérico (F1)
+│   ├── debug_bindings.gd         # Registra os parâmetros do mapa no menu
 │   └── interactables/
 │       ├── door.gd
 │       └── pickable.gd

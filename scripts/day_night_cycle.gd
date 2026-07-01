@@ -43,9 +43,11 @@ func _ready() -> void:
 
 
 func _process(delta: float) -> void:
-	if paused or day_length_seconds <= 0.0:
-		return
-	time_of_day = fposmod(time_of_day + delta / day_length_seconds, 1.0)
+	# Avança o tempo só quando não está pausado; mas SEMPRE reaplica, para que
+	# mudanças externas (ex.: scrub da hora pelo menu de debug) tenham efeito
+	# mesmo com o ciclo pausado.
+	if not paused and day_length_seconds > 0.0:
+		time_of_day = fposmod(time_of_day + delta / day_length_seconds, 1.0)
 	_apply()
 
 

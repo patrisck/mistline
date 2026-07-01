@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 Interaction="*res://scripts/interaction_manager.gd"
+DebugMenu="*res://scripts/debug_menu.gd"
 
 [display]
 
