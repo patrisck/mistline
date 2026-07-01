@@ -1,0 +1,20 @@
+# Godot 4+ specific ignores
+# Import cache and editor-generated data. The per-asset *.import and *.uid
+# files ARE committed (they carry stable asset UIDs); only this folder is not.
+.godot/
+
+# Mono/.NET (não usado neste projeto, mas por segurança)
+.mono/
+data_*/
+
+# Builds / exports
+/build/
+/dist/
+/exports/
+export_presets.cfg
+
+# Editor / OS junk
+*.tmp
+*.bak
+Thumbs.db
+.DS_Store

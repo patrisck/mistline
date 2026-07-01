@@ -1,0 +1,194 @@
+extends CharacterBody3D
+## Controlador de personagem em primeira pessoa.
+## - Movimento WASD + corrida + pulo com gravidade (move_and_slide)
+## - Câmera mouse-look (corpo gira no eixo Y, cabeça no eixo X)
+## - Interação por raycast: abrir portas e pegar UM item por vez (física)
+##
+## O item é carregado por VELOCIDADE (não por reparent/posição direta) para
+## manter o comportamento físico correto e a colisão com paredes, no estilo
+## My Summer Car / Mon Bazou.
+
+# --- Movimento ---
+@export_group("Movimento")
+@export var walk_speed: float = 4.0
+@export var sprint_speed: float = 7.0
+@export var acceleration: float = 12.0
+@export var jump_velocity: float = 6.0
+@export var mouse_sensitivity: float = 0.0025
+@export var pitch_limit_deg: float = 89.0
+
+# --- Interação / carregar ---
+@export_group("Interação")
+## Alcance do raycast de interação (metros).
+@export var interact_distance: float = 3.0
+## Rigidez do "elástico" que puxa o item até o ponto de segurar.
+@export var carry_stiffness: float = 12.0
+## Velocidade máxima com que o item persegue o ponto de segurar.
+@export var carry_max_speed: float = 20.0
+## Se o item ficar mais longe que isto do ponto (preso atrás de algo), solta.
+@export var carry_break_distance: float = 2.5
+## Força do arremesso (botão direito).
+@export var throw_impulse: float = 8.0
+
+@onready var head: Node3D = $Head
+@onready var camera: Camera3D = $Head/Camera3D
+@onready var interact_ray: RayCast3D = $Head/Camera3D/InteractRay
+@onready var hold_point: Marker3D = $Head/Camera3D/HoldPoint
+
+var _held_body: RigidBody3D = null
+var _held_original_gravity: float = 1.0
+
+
+func _ready() -> void:
+	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+	interact_ray.target_position = Vector3(0, 0, -interact_distance)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Mouse-look só quando o mouse está capturado.
+	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+		rotate_y(-event.relative.x * mouse_sensitivity)
+		head.rotate_x(-event.relative.y * mouse_sensitivity)
+		var limit := deg_to_rad(pitch_limit_deg)
+		head.rotation.x = clamp(head.rotation.x, -limit, limit)
+
+	# Esc alterna captura do mouse (útil pra sair da janela).
+	if event.is_action_pressed("ui_cancel"):
+		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
+			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
+		else:
+			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+
+	# Recaptura ao clicar de volta na janela.
+	if event.is_action_pressed("interact") and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
+		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
+		return
+
+	if event.is_action_pressed("interact"):
+		_on_interact()
+	elif event.is_action_pressed("throw"):
+		_on_throw()
+
+
+func _physics_process(delta: float) -> void:
+	_handle_movement(delta)
+	_update_carry()
+	_update_prompt()
+
+
+func _handle_movement(delta: float) -> void:
+	if not is_on_floor():
+		velocity += get_gravity() * delta
+
+	if Input.is_action_just_pressed("jump") and is_on_floor():
+		velocity.y = jump_velocity
+
+	var input_dir := Input.get_vector("move_left", "move_right", "move_forward", "move_back")
+	var direction := (transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+
+	var target_speed := sprint_speed if Input.is_action_pressed("sprint") else walk_speed
+	var target_vel := direction * target_speed
+
+	velocity.x = move_toward(velocity.x, target_vel.x, acceleration * delta * target_speed)
+	velocity.z = move_toward(velocity.z, target_vel.z, acceleration * delta * target_speed)
+
+	move_and_slide()
+
+
+# --------------------------------------------------------------------------
+# Interação
+# --------------------------------------------------------------------------
+
+func _on_interact() -> void:
+	# Se já segura algo, o clique esquerdo solta.
+	if _held_body != null:
+		_drop()
+		return
+
+	var target := _get_interactable()
+	if target == null:
+		return
+
+	if target is RigidBody3D and target.is_in_group("pickable"):
+		_pick_up(target)
+	elif target.has_method("interact"):
+		target.interact(self)
+
+
+func _on_throw() -> void:
+	if _held_body == null:
+		return
+	var body := _held_body
+	var dir := -camera.global_transform.basis.z
+	_drop()
+	body.apply_central_impulse(dir * throw_impulse)
+
+
+## Retorna o nó interativo sob a mira, ou null.
+func _get_interactable() -> Node:
+	if not interact_ray.is_colliding():
+		return null
+	var collider := interact_ray.get_collider()
+	if collider is Node and (collider.has_method("interact") or collider.is_in_group("pickable")):
+		return collider
+	return null
+
+
+func _pick_up(body: RigidBody3D) -> void:
+	_held_body = body
+	_held_original_gravity = body.gravity_scale
+	body.gravity_scale = 0.0
+	body.sleeping = false
+	# Não colidir com o próprio jogador enquanto carrega (evita empurrão/jitter).
+	body.add_collision_exception_with(self)
+	Interaction.notify_hold_state(true)
+
+
+func _drop() -> void:
+	if _held_body == null:
+		return
+	_held_body.gravity_scale = _held_original_gravity
+	_held_body.remove_collision_exception_with(self)
+	_held_body = null
+	Interaction.notify_hold_state(false)
+
+
+## Move o item carregado em direção ao ponto de segurar usando velocidade.
+## Roda no passo de física para o controle de velocidade ficar estável.
+func _update_carry() -> void:
+	if _held_body == null:
+		return
+
+	var to_target := hold_point.global_position - _held_body.global_position
+
+	# Se o item ficou preso atrás de algo (muito longe), solta.
+	if to_target.length() > carry_break_distance:
+		_drop()
+		return
+
+	# Elástico: velocidade proporcional à distância, com teto.
+	var desired_velocity := to_target * carry_stiffness
+	if desired_velocity.length() > carry_max_speed:
+		desired_velocity = desired_velocity.normalized() * carry_max_speed
+
+	_held_body.linear_velocity = desired_velocity
+	# Amortece o giro pra não ficar rodando na mão.
+	_held_body.angular_velocity = _held_body.angular_velocity.lerp(Vector3.ZERO, 0.2)
+
+
+func _update_prompt() -> void:
+	if _held_body != null:
+		Interaction.set_prompt("[Esq] Soltar    [Dir] Arremessar")
+		return
+
+	var target := _get_interactable()
+	if target == null:
+		Interaction.set_prompt("")
+		return
+
+	if target.has_method("get_prompt"):
+		Interaction.set_prompt("[Esq] " + target.get_prompt())
+	elif target.is_in_group("pickable"):
+		Interaction.set_prompt("[Esq] Pegar")
+	else:
+		Interaction.set_prompt("[Esq] Interagir")
