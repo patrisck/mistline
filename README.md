@@ -38,7 +38,10 @@ enevoado — inspirado no ofício tátil de *Mon Bazou* / *My Summer Car*. Feito
   - **Progressão simples → automático:** cada estação sobe de tier pagando (`U`).
     Esmagador vira automático; fermentador ganha temperatura automática e depois
     engarrafamento automático.
-- **Mapa de teste** — garagem que virou vinícola, com as 4 estações.
+- **🚗 Carro (simcade)** — `VehicleBody3D` com suspensão raycast, entrar/sair,
+  câmera em 1ª pessoa no banco, volante e **caixa manual** (marchas R/N/1–5).
+  Física arcade-realista, autocontido (assume o input ao dirigir).
+- **Mapa de teste** — garagem que virou vinícola (4 estações) + um carro do lado de fora.
 
 ## Controles
 
@@ -54,6 +57,9 @@ enevoado — inspirado no ofício tátil de *Mon Bazou* / *My Summer Car*. Feito
 | Melhorar (upgrade) a estação sob a mira | `U` |
 | Liberar/recapturar mouse | `Esc` |
 | Abrir/fechar menu de debug | `F1` |
+| Entrar no carro / sair | **Botão esquerdo** / `F` |
+| Dirigir | `W` acelera · `S` freia · `A`/`D` esterça · `Espaço` freio de mão |
+| Trocar marcha (sobe / desce) | `E` / `Q` |
 
 ## Como rodar
 

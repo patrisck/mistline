@@ -216,6 +216,28 @@ func take_held() -> RigidBody3D:
 	return b
 
 
+## Desativa o jogador enquanto ele dirige (o carro assume câmera e input).
+func enter_vehicle() -> void:
+	if _held_body != null:
+		_drop()
+	Interaction.set_prompt("")
+	visible = false
+	$CollisionShape3D.set_deferred("disabled", true)
+	set_physics_process(false)
+	set_process_unhandled_input(false)
+
+
+## Reativa o jogador ao sair do carro, posicionando-o em `at`.
+func exit_vehicle(at: Transform3D) -> void:
+	global_transform = at
+	velocity = Vector3.ZERO
+	visible = true
+	$CollisionShape3D.set_deferred("disabled", false)
+	set_physics_process(true)
+	set_process_unhandled_input(true)
+	camera.current = true
+
+
 ## Move o item carregado em direção ao ponto de segurar usando velocidade.
 ## Roda no passo de física para o controle de velocidade ficar estável.
 func _update_carry() -> void:
