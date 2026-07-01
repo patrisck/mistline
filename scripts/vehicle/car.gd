@@ -87,7 +87,9 @@ func _physics_process(delta: float) -> void:
 	var brake_in := Input.get_action_strength("move_back")
 	var steer_in := Input.get_action_strength("move_left") - Input.get_action_strength("move_right")
 
-	engine_force = throttle * max_engine_force * gear_ratios[_gear]
+	# Sinal invertido: a frente do carro (rodas/câmera) está em -Z, mas
+	# engine_force positivo do VehicleBody3D empurra em +Z.
+	engine_force = -throttle * max_engine_force * gear_ratios[_gear]
 	brake = brake_in * max_brake
 	if Input.is_action_pressed("jump"):
 		brake = max_brake * 2.5  # freio de mão
