@@ -12,9 +12,24 @@ extends Node
 
 func _ready() -> void:
 	# Segurança: só registra se o autoload existir.
-	if not Engine.has_singleton("DebugMenu") and get_node_or_null("/root/DebugMenu") == null:
+	if get_node_or_null("/root/DebugMenu") == null:
 		push_warning("DebugMenu autoload não encontrado; menu de debug indisponível.")
 		return
+
+	# Resolve os nós por nome a partir do pai. Não depende da resolução de
+	# NodePath exportado no .tscn (que nem sempre resolve escrito à mão).
+	var root := get_parent()
+	if root != null:
+		if player == null:
+			player = root.get_node_or_null("Player")
+		if day_night == null:
+			day_night = root.get_node_or_null("DayNightCycle")
+		if world_environment == null:
+			world_environment = root.get_node_or_null("WorldEnvironment")
+		if garage_light == null:
+			garage_light = root.get_node_or_null("GarageLight")
+		if workbench_lamp == null:
+			workbench_lamp = root.get_node_or_null("WorkbenchLamp")
 
 	DebugMenu.clear_params()
 

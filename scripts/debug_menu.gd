@@ -58,6 +58,10 @@ func add_action(section: String, label: String, callable: Callable) -> void:
 	})
 
 
+func get_param_count() -> int:
+	return _entries.size()
+
+
 # --------------------------------------------------------------------------
 # Abertura / entrada
 # --------------------------------------------------------------------------
