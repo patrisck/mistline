@@ -8,6 +8,9 @@ extends Node
 @export var world_environment: WorldEnvironment
 @export var garage_light: Light3D
 @export var workbench_lamp: Light3D
+@export var fermenter: Node
+@export var grape_bin: Node
+@export var sales_counter: Node
 
 
 func _ready() -> void:
@@ -30,6 +33,13 @@ func _ready() -> void:
 			garage_light = root.get_node_or_null("GarageLight")
 		if workbench_lamp == null:
 			workbench_lamp = root.get_node_or_null("WorkbenchLamp")
+
+		if fermenter == null:
+			fermenter = root.get_node_or_null("Fermenter")
+		if grape_bin == null:
+			grape_bin = root.get_node_or_null("GrapeBin")
+		if sales_counter == null:
+			sales_counter = root.get_node_or_null("SalesCounter")
 
 	DebugMenu.clear_params()
 
@@ -66,3 +76,11 @@ func _ready() -> void:
 		DebugMenu.add_float("Luzes", "Lâmpada garagem", garage_light, "light_energy", 0.0, 10.0, 0.1)
 	if workbench_lamp != null:
 		DebugMenu.add_float("Luzes", "Holofote bancada", workbench_lamp, "light_energy", 0.0, 12.0, 0.1)
+
+	if fermenter != null:
+		DebugMenu.add_float("Vinho", "Fermentação (s)", fermenter, "ferment_seconds", 5.0, 120.0, 1.0)
+	if grape_bin != null:
+		DebugMenu.add_float("Vinho", "Preço uvas", grape_bin, "cost", 0.0, 100.0, 1.0)
+	if sales_counter != null:
+		DebugMenu.add_float("Vinho", "Preço/qualidade", sales_counter, "price_per_quality", 0.0, 3.0, 0.1)
+	DebugMenu.add_action("Vinho", "+ $500 (grátis)", func() -> void: GameState.add_money(500))

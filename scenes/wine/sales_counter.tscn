@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://b61wu5fos8fxk"]
+
+[ext_resource type="Script" path="res://scripts/wine/sales_counter.gd" id="1_sc"]
+
+[sub_resource type="StandardMaterial3D" id="Mat_counter"]
+albedo_color = Color(0.35, 0.24, 0.14, 1)
+roughness = 0.85
+
+[sub_resource type="BoxMesh" id="Box_counter"]
+size = Vector3(1.2, 0.9, 0.6)
+
+[sub_resource type="BoxShape3D" id="Shape_counter"]
+size = Vector3(1.2, 0.9, 0.6)
+
+[node name="SalesCounter" type="StaticBody3D"]
+collision_layer = 5
+collision_mask = 1
+script = ExtResource("1_sc")
+display_name = "Balcão"
+max_tier = 0
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+material_override = SubResource("Mat_counter")
+mesh = SubResource("Box_counter")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.45, 0)
+shape = SubResource("Shape_counter")

@@ -82,6 +82,12 @@ func _unhandled_input(event: InputEvent) -> void:
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			_rotate_held(-1.0)
 
+	# Tecla U: melhorar (upgrade) a estação sob a mira.
+	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_U:
+		var t := _get_interactable()
+		if t != null and t.has_method("try_upgrade"):
+			t.try_upgrade()
+
 
 func _physics_process(delta: float) -> void:
 	_handle_movement(delta)
@@ -113,12 +119,19 @@ func _handle_movement(delta: float) -> void:
 # --------------------------------------------------------------------------
 
 func _on_interact() -> void:
-	# Se já segura algo, o clique esquerdo solta.
+	var target := _get_interactable()
+
+	# Com item na mão: se o alvo é interativo mas NÃO é um item (ex.: uma
+	# estação), deixa ele usar o que você segura (despejar uvas, vender...).
+	# Caso contrário, solta o item.
 	if _held_body != null:
-		_drop()
+		if target != null and target != _held_body and target.has_method("interact") \
+				and not target.is_in_group("pickable"):
+			target.interact(self)
+		else:
+			_drop()
 		return
 
-	var target := _get_interactable()
 	if target == null:
 		return
 
@@ -129,7 +142,12 @@ func _on_interact() -> void:
 
 
 func _on_throw() -> void:
+	# Sem item na mão: clique-direito é a "ação secundária" da estação sob a
+	# mira (ex.: enviar o mosto pro fermentador).
 	if _held_body == null:
+		var target := _get_interactable()
+		if target != null and target.has_method("secondary_interact"):
+			target.secondary_interact(self)
 		return
 	var body := _held_body
 	var dir := -camera.global_transform.basis.z
@@ -156,6 +174,8 @@ func _pick_up(body: RigidBody3D) -> void:
 	_carry_basis = body.global_transform.basis.orthonormalized()
 	# Não colidir com o próprio jogador enquanto carrega (evita empurrão/jitter).
 	body.add_collision_exception_with(self)
+	# O item na mão não deve bloquear o raycast de interação.
+	interact_ray.add_exception(body)
 	Interaction.notify_hold_state(true)
 
 
@@ -172,8 +192,28 @@ func _drop() -> void:
 		return
 	_held_body.gravity_scale = _held_original_gravity
 	_held_body.remove_collision_exception_with(self)
+	interact_ray.remove_exception(_held_body)
 	_held_body = null
 	Interaction.notify_hold_state(false)
+
+
+## Item atualmente na mão (ou null). Usado pelas estações.
+func get_held() -> RigidBody3D:
+	return _held_body
+
+
+## Remove o item da mão (pra uma estação consumir) sem soltá-lo no chão e o
+## retorna, restaurando a física do corpo.
+func take_held() -> RigidBody3D:
+	if _held_body == null:
+		return null
+	var b := _held_body
+	b.gravity_scale = _held_original_gravity
+	b.remove_collision_exception_with(self)
+	interact_ray.remove_exception(b)
+	_held_body = null
+	Interaction.notify_hold_state(false)
+	return b
 
 
 ## Move o item carregado em direção ao ponto de segurar usando velocidade.

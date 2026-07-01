@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://f1testmap0sim01"]
+[gd_scene load_steps=27 format=3 uid="uid://f1testmap0sim01"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud"]
@@ -7,6 +7,10 @@
 [ext_resource type="PackedScene" path="res://scenes/interactables/pickable_wheel.tscn" id="5_wheel"]
 [ext_resource type="Script" path="res://scripts/day_night_cycle.gd" id="6_daynight"]
 [ext_resource type="Script" path="res://scripts/debug_bindings.gd" id="7_debug"]
+[ext_resource type="PackedScene" path="res://scenes/wine/grape_bin.tscn" id="8_bin"]
+[ext_resource type="PackedScene" path="res://scenes/wine/crusher.tscn" id="9_crusher"]
+[ext_resource type="PackedScene" path="res://scenes/wine/fermenter.tscn" id="10_ferm"]
+[ext_resource type="PackedScene" path="res://scenes/wine/sales_counter.tscn" id="11_sales"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
 sky_top_color = Color(0.06, 0.08, 0.12, 1)
@@ -237,6 +241,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -3)
 
 [node name="Wheel1" parent="." instance=ExtResource("5_wheel")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.3, 0.7, 4.2)
+
+[node name="GrapeBin" parent="." instance=ExtResource("8_bin")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.3, 0, -4.2)
+
+[node name="Crusher" parent="." instance=ExtResource("9_crusher")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.8, 0, -4)
+
+[node name="Fermenter" parent="." instance=ExtResource("10_ferm")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.9, 0, -4)
+
+[node name="SalesCounter" parent="." instance=ExtResource("11_sales")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 0, -4)
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 6)
