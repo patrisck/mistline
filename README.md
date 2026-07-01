@@ -1,4 +1,4 @@
-# Auto Restore Sim
+# Mistline
 
 Protótipo de um **simulador de reforma automotiva** em primeira pessoa, no estilo
 *Mon Bazou* e *My Summer Car*. Feito na **Godot Engine 4.7** com **GDScript**.
@@ -42,7 +42,7 @@ A cena inicial é `scenes/world/test_map.tscn`.
 ## Estrutura do projeto
 
 ```
-auto-restore-sim/
+mistline/
 ├── project.godot            # Config, input map, camadas de física, autoloads
 ├── icon.svg
 ├── scenes/
