@@ -48,6 +48,7 @@ var _carry_basis: Basis = Basis.IDENTITY
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	interact_ray.target_position = Vector3(0, 0, -interact_distance)
+	camera.current = true  # garante a visão do player (não a do carro) ao nascer
 
 
 func _unhandled_input(event: InputEvent) -> void:
