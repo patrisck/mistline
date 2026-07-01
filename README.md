@@ -16,8 +16,11 @@ Protótipo de um **simulador de reforma automotiva** em primeira pessoa, no esti
   - **Abrir / fechar portas** (física, empurra o jogador corretamente).
   - **Pegar itens com física** — um por vez. O item é carregado por controle de
     velocidade, então ele colide com paredes e cai se ficar preso.
+- **Girar item** no próprio eixo com o **scroll** do mouse enquanto segura.
 - **Arremessar** o item segurado (clique direito).
-- **HUD** com mira e texto de contexto ("Abrir porta", "Pegar Caixa"...).
+- **HUD** com mira que reage a alvos interativos, painel de contexto e vinheta.
+- **Atmosfera sombria** — neblina volumétrica, tonemapping AgX, iluminação de
+  clima (sol frio + lâmpadas quentes de trabalho). Foco visual em luz, não em texturas.
 - **Mapa de teste** — garagem com porta, bancada e itens espalhados.
 
 ## Controles
@@ -29,6 +32,7 @@ Protótipo de um **simulador de reforma automotiva** em primeira pessoa, no esti
 | Pular | `Espaço` |
 | Olhar | Mouse |
 | Interagir / Pegar / Soltar | **Botão esquerdo** do mouse |
+| Girar item segurado | **Scroll** do mouse |
 | Arremessar item | **Botão direito** do mouse |
 | Liberar/recapturar mouse | `Esc` |
 
@@ -55,12 +59,14 @@ mistline/
 │   └── ui/hud.tscn               # Mira + prompt de contexto
 ├── scripts/
 │   ├── interaction_manager.gd    # Autoload: barramento de sinais Player↔UI
-│   ├── player.gd                 # Controlador do personagem + carregar item
+│   ├── player.gd                 # Controlador + carregar/girar item
 │   ├── hud.gd                    # HUD
+│   ├── crosshair.gd              # Mira desenhada por código (feedback de alvo)
 │   └── interactables/
 │       ├── door.gd
 │       └── pickable.gd
-└── assets/                       # Materiais e modelos (futuro)
+└── assets/
+    └── shaders/vignette.gdshader # Vinheta atmosférica do HUD
 ```
 
 ### Convenção de interação

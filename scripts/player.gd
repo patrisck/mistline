@@ -29,6 +29,10 @@ extends CharacterBody3D
 @export var carry_break_distance: float = 2.5
 ## Força do arremesso (botão direito).
 @export var throw_impulse: float = 8.0
+## Quanto o item gira por "notch" do scroll (radianos). ~12 graus.
+@export var carry_rotate_step: float = 0.209
+## Rigidez do controle de orientação (segura e gira o item de forma estável).
+@export var carry_orient_stiffness: float = 10.0
 
 @onready var head: Node3D = $Head
 @onready var camera: Camera3D = $Head/Camera3D
@@ -37,6 +41,8 @@ extends CharacterBody3D
 
 var _held_body: RigidBody3D = null
 var _held_original_gravity: float = 1.0
+## Orientação-alvo do item carregado. O scroll gira este alvo; a física persegue.
+var _carry_basis: Basis = Basis.IDENTITY
 
 
 func _ready() -> void:
@@ -68,6 +74,13 @@ func _unhandled_input(event: InputEvent) -> void:
 		_on_interact()
 	elif event.is_action_pressed("throw"):
 		_on_throw()
+
+	# Scroll do mouse gira o item segurado no próprio eixo (vertical).
+	if _held_body != null and event is InputEventMouseButton and event.pressed:
+		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+			_rotate_held(1.0)
+		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+			_rotate_held(-1.0)
 
 
 func _physics_process(delta: float) -> void:
@@ -139,9 +152,17 @@ func _pick_up(body: RigidBody3D) -> void:
 	_held_original_gravity = body.gravity_scale
 	body.gravity_scale = 0.0
 	body.sleeping = false
+	# Começa a segurar mantendo a orientação atual do item.
+	_carry_basis = body.global_transform.basis.orthonormalized()
 	# Não colidir com o próprio jogador enquanto carrega (evita empurrão/jitter).
 	body.add_collision_exception_with(self)
 	Interaction.notify_hold_state(true)
+
+
+## Gira o alvo de orientação do item em torno do eixo vertical do mundo.
+func _rotate_held(direction: float) -> void:
+	_carry_basis = Basis(Vector3.UP, direction * carry_rotate_step) * _carry_basis
+	_carry_basis = _carry_basis.orthonormalized()
 
 
 func _drop() -> void:
@@ -172,13 +193,26 @@ func _update_carry() -> void:
 		desired_velocity = desired_velocity.normalized() * carry_max_speed
 
 	_held_body.linear_velocity = desired_velocity
-	# Amortece o giro pra não ficar rodando na mão.
-	_held_body.angular_velocity = _held_body.angular_velocity.lerp(Vector3.ZERO, 0.2)
+
+	# Controle de orientação: gira o item até a orientação-alvo (_carry_basis),
+	# convertendo a diferença de rotação em velocidade angular. Assim o item
+	# fica estável na mão e responde ao scroll sem "cair" pra qualquer lado.
+	var current_q := _held_body.global_transform.basis.get_rotation_quaternion()
+	var target_q := _carry_basis.get_rotation_quaternion()
+	var delta_q := target_q * current_q.inverse()
+	if delta_q.w < 0.0:
+		delta_q = -delta_q  # caminho mais curto
+	var angle := 2.0 * acos(clampf(delta_q.w, -1.0, 1.0))
+	var axis := Vector3(delta_q.x, delta_q.y, delta_q.z)
+	if angle > 0.0001 and axis.length() > 0.0001:
+		_held_body.angular_velocity = axis.normalized() * angle * carry_orient_stiffness
+	else:
+		_held_body.angular_velocity = Vector3.ZERO
 
 
 func _update_prompt() -> void:
 	if _held_body != null:
-		Interaction.set_prompt("[Esq] Soltar    [Dir] Arremessar")
+		Interaction.set_prompt("[Esq] Soltar     [Scroll] Girar     [Dir] Arremessar")
 		return
 
 	var target := _get_interactable()
