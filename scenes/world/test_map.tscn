@@ -1,4 +1,4 @@
-[gd_scene load_steps=28 format=3 uid="uid://f1testmap0sim01"]
+[gd_scene load_steps=29 format=3 uid="uid://f1testmap0sim01"]
 
 [ext_resource type="PackedScene" path="res://scenes/player/player.tscn" id="1_player"]
 [ext_resource type="PackedScene" path="res://scenes/ui/hud.tscn" id="2_hud"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" path="res://scenes/wine/fermenter.tscn" id="10_ferm"]
 [ext_resource type="PackedScene" path="res://scenes/wine/sales_counter.tscn" id="11_sales"]
 [ext_resource type="PackedScene" path="res://scenes/vehicle/car.tscn" id="12_car"]
+[ext_resource type="Script" path="res://scripts/vehicle/drift_track.gd" id="13_track"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_1"]
 sky_top_color = Color(0.06, 0.08, 0.12, 1)
@@ -257,6 +258,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.3, 0, -4)
 
 [node name="Car" parent="." instance=ExtResource("12_car")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6, 0.7, 4)
+
+[node name="DriftTrack" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 9)
+script = ExtResource("13_track")
 
 [node name="Player" parent="." instance=ExtResource("1_player")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 6)

@@ -62,11 +62,14 @@ inspired by the tactile craft of *Mon Bazou* / *My Summer Car*. Built in
 | Release/recapture mouse | `Esc` |
 | Open/close debug menu | `F1` |
 | Enter car / exit | **Left click** / `F` |
-| Drive (3rd person, RWD) | `W` throttle · `S` brake · `A`/`D` steer · `Space` handbrake (locks rear → slide) |
-| Shift gear (up / down) | `E` / `Q` |
+| Drive (3rd person, RWD) | `W` throttle · `S` brake · `A`/`D` steer · `Space` handbrake |
+| Clutch (hold) | `Shift` — revs climb; release at high RPM for a clutch-kick drift |
+| Shift gear (up / down) | `E` / `Q` (no clutch needed to shift) |
 
-> **Drifting:** drop to 1st or 2nd gear, get some speed, then throttle hard
-> through a turn (or tap `Space`) to break the rear loose. High gears grip.
+> **Drifting:** in 1st/2nd gear the torque overwhelms rear grip (friction-circle
+> approximation) so throttling hard breaks the rear loose — counter-steer to hold
+> it. High gears grip. Or hold `Shift` (clutch), rev up, release for a kick.
+> There's a cone **skidpad** by the garage for practice.
 
 ## How to run
 

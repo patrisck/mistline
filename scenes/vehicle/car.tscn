@@ -123,8 +123,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.5, -0.1, 0)
 anchor_top = 1.0
 anchor_bottom = 1.0
 offset_left = 18.0
-offset_top = -86.0
-offset_right = 170.0
+offset_top = -118.0
+offset_right = 180.0
 offset_bottom = -18.0
 grow_vertical = 0
 
@@ -140,3 +140,8 @@ theme_override_font_sizes/font_size = 22
 layout_mode = 2
 text = "Gear: N"
 theme_override_font_sizes/font_size = 18
+
+[node name="RPM" type="Label" parent="CarHUD/Panel/VBox"]
+layout_mode = 2
+text = "900 rpm"
+theme_override_font_sizes/font_size = 16

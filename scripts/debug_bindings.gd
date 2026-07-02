@@ -91,9 +91,13 @@ func _ready() -> void:
 	if car != null:
 		# Drift threshold: raise engine force or lower rear grip to drift more
 		# easily (in lower gears). Front grip = steering bite.
-		DebugMenu.add_float("Car", "Engine force", car, "max_engine_force", 100.0, 3000.0, 25.0)
+		DebugMenu.add_float("Car", "Engine force", car, "max_engine_force", 100.0, 4000.0, 25.0)
 		DebugMenu.add_float("Car", "Front grip", car, "front_grip", 0.5, 8.0, 0.1)
 		DebugMenu.add_float("Car", "Rear grip", car, "rear_grip", 0.5, 8.0, 0.1)
+		DebugMenu.add_float("Car", "Traction break point", car, "traction_break_point", 0.3, 3.0, 0.05)
+		DebugMenu.add_float("Car", "Traction sensitivity", car, "traction_sensitivity", 0.2, 4.0, 0.1)
+		DebugMenu.add_float("Car", "Drift grip factor", car, "drift_grip_factor", 0.1, 1.0, 0.05)
+		DebugMenu.add_float("Car", "Clutch kick strength", car, "clutch_kick_strength", 0.0, 5.0, 0.1)
 		DebugMenu.add_float("Car", "Handbrake rear grip", car, "handbrake_rear_grip", 0.1, 4.0, 0.1)
 		DebugMenu.add_float("Car", "Angular damp (anti-spin)", car, "angular_damp", 0.0, 5.0, 0.1)
 		DebugMenu.add_float("Car", "Roll influence (0=stable)", car, "roll_influence", 0.0, 1.0, 0.01)
