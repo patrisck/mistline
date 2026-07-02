@@ -11,6 +11,7 @@ extends Node
 @export var fermenter: Node
 @export var grape_bin: Node
 @export var sales_counter: Node
+@export var car: Node
 
 
 func _ready() -> void:
@@ -40,6 +41,8 @@ func _ready() -> void:
 			grape_bin = root.get_node_or_null("GrapeBin")
 		if sales_counter == null:
 			sales_counter = root.get_node_or_null("SalesCounter")
+		if car == null:
+			car = root.get_node_or_null("Car")
 
 	DebugMenu.clear_params()
 
@@ -84,3 +87,14 @@ func _ready() -> void:
 	if sales_counter != null:
 		DebugMenu.add_float("Wine", "Price/quality", sales_counter, "price_per_quality", 0.0, 3.0, 0.1)
 	DebugMenu.add_action("Wine", "+ $500 (free)", func() -> void: GameState.add_money(500))
+
+	if car != null:
+		# Drift threshold: raise engine force or lower rear grip to drift more
+		# easily (in lower gears). Front grip = steering bite.
+		DebugMenu.add_float("Car", "Engine force", car, "max_engine_force", 100.0, 3000.0, 25.0)
+		DebugMenu.add_float("Car", "Front grip", car, "front_grip", 0.5, 8.0, 0.1)
+		DebugMenu.add_float("Car", "Rear grip", car, "rear_grip", 0.5, 8.0, 0.1)
+		DebugMenu.add_float("Car", "Handbrake rear grip", car, "handbrake_rear_grip", 0.1, 4.0, 0.1)
+		DebugMenu.add_float("Car", "Max steer", car, "max_steer", 0.2, 1.0, 0.02)
+		DebugMenu.add_float("Car", "Cam distance", car, "cam_distance", 3.0, 12.0, 0.2)
+		DebugMenu.add_float("Car", "Cam height", car, "cam_height", 1.0, 6.0, 0.1)

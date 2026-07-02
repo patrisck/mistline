@@ -39,9 +39,12 @@ inspired by the tactile craft of *Mon Bazou* / *My Summer Car*. Built in
   - **Simple → automated progression:** each station levels up by paying (`U`).
     The crusher becomes automatic; the fermenter gains automatic temperature and
     later automatic bottling.
-- **🚗 Car (simcade)** — `VehicleBody3D` with raycast suspension, enter/exit,
-  first-person camera in the seat, steering, and a **manual gearbox** (R/N/1–5 gears).
-  Arcade-realistic physics, self-contained (takes over input while driving).
+- **🚗 Car (simcade RWD + drift)** — `VehicleBody3D` with raycast suspension,
+  **rear-wheel drive** and a **third-person chase camera**. Drift is not an
+  assist — it emerges from physics: in low gears the torque overwhelms rear
+  grip and the back steps out; in high gears it stays planted (like real life).
+  Enter/exit, steering, handbrake, and a **manual gearbox** (R/N/1–5).
+  Low center of gravity; grip/engine tunable in the debug menu (`F1` → "Car").
 - **Test map** — a garage turned winery (4 stations) + a car parked outside.
 
 ## Controls
@@ -59,8 +62,11 @@ inspired by the tactile craft of *Mon Bazou* / *My Summer Car*. Built in
 | Release/recapture mouse | `Esc` |
 | Open/close debug menu | `F1` |
 | Enter car / exit | **Left click** / `F` |
-| Drive | `W` throttle · `S` brake · `A`/`D` steer · `Space` handbrake |
+| Drive (3rd person, RWD) | `W` throttle · `S` brake · `A`/`D` steer · `Space` handbrake (locks rear → slide) |
 | Shift gear (up / down) | `E` / `Q` |
+
+> **Drifting:** drop to 1st or 2nd gear, get some speed, then throttle hard
+> through a turn (or tap `Space`) to break the rear loose. High gears grip.
 
 ## How to run
 
