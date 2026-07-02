@@ -95,6 +95,7 @@ func _ready() -> void:
 		DebugMenu.add_float("Car", "Front grip", car, "front_grip", 0.5, 8.0, 0.1)
 		DebugMenu.add_float("Car", "Rear grip", car, "rear_grip", 0.5, 8.0, 0.1)
 		DebugMenu.add_float("Car", "Handbrake rear grip", car, "handbrake_rear_grip", 0.1, 4.0, 0.1)
+		DebugMenu.add_float("Car", "Angular damp (anti-spin)", car, "angular_damp", 0.0, 5.0, 0.1)
 		DebugMenu.add_float("Car", "Roll influence (0=stable)", car, "roll_influence", 0.0, 1.0, 0.01)
 		DebugMenu.add_float("Car", "Suspension stiffness", car, "suspension_stiffness", 30.0, 300.0, 5.0)
 		DebugMenu.add_float("Car", "Max steer", car, "max_steer", 0.2, 1.0, 0.02)

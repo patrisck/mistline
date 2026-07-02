@@ -22,7 +22,8 @@ class_name Car
 @export var front_grip: float = 4.5
 @export var rear_grip: float = 2.5
 ## While the handbrake is held, rear grip drops to this (locks the rear -> slide).
-@export var handbrake_rear_grip: float = 0.6
+## Too low (~0.5) makes it frictionless and it spins out; ~1.0-1.5 = controllable slide.
+@export var handbrake_rear_grip: float = 1.1
 ## Wheel roll torque. LOWER = more roll-stable (0 = won't tip); higher = leans/tips.
 @export var roll_influence: float = 0.0
 ## Suspension stiffness (N/mm). Higher = less sag/less body movement.
