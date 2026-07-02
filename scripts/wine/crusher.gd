@@ -1,11 +1,11 @@
 extends Station
 class_name Crusher
-## Esmagador. Fluxo:
-##   [segurando caixa] Esq = despejar uvas
-##   [tem mosto]       Esq = pisar/esmagar (sobe a extração)
-##                     Dir = enviar mosto pro fermentador (você decide QUANDO)
-## Decisão: a qualidade da extração tem pico ~0.85 — nem cru, nem amargo.
-## Tier AUTO (>=1): esmaga sozinho e envia quando o fermentador estiver livre.
+## Crusher. Flow:
+##   [holding crate] LMB = pour grapes
+##   [has must]      LMB = stomp/crush (raises extraction)
+##                   RMB = send must to the fermenter (you decide WHEN)
+## Decision: extraction quality peaks around 0.85 — neither raw nor bitter.
+## AUTO tier (>=1): crushes on its own and sends when the fermenter is free.
 
 const CRUSH_PER_CLICK := 0.14
 const AUTO_CRUSH_PER_SEC := 0.3
@@ -28,13 +28,13 @@ func interact(player: Node) -> void:
 		_load_grapes(held)
 		player.take_held().queue_free()
 		return
-	# Esmagar manualmente
+	# Crush manually
 	if _batch != null and _batch.extraction < 1.0 and not is_automated():
 		_batch.extraction = minf(_batch.extraction + CRUSH_PER_CLICK, 1.0)
 
 
 func secondary_interact(_player: Node) -> void:
-	# Enviar o mosto no ponto de extração atual (a decisão de parar).
+	# Send the must at the current extraction point (the decision to stop).
 	if _batch != null and _batch.extraction > 0.05:
 		_transfer()
 
@@ -56,7 +56,7 @@ func _transfer() -> void:
 	var ferm := get_tree().get_first_node_in_group("fermenter")
 	if ferm == null or not ferm.has_method("can_receive") or not ferm.can_receive():
 		return
-	# Qualidade da extração: pico em ~0.85.
+	# Extraction quality: peaks around 0.85.
 	var ex_q := clampf(1.0 - absf(_batch.extraction - 0.85) * 1.4, 0.0, 1.0)
 	_batch.quality = clampf(_batch.quality * (0.55 + 0.45 * ex_q), 0.0, 100.0)
 	ferm.receive_must(_batch)
@@ -64,10 +64,10 @@ func _transfer() -> void:
 
 
 func get_prompt() -> String:
-	var base := "Esmagador %s" % tier_label()
+	var base := "Crusher %s" % tier_label()
 	if _batch == null:
-		return "%s — traga uvas (segure a caixa)%s" % [base, upgrade_hint()]
+		return "%s — bring grapes (hold the crate)%s" % [base, upgrade_hint()]
 	var pct := int(_batch.extraction * 100.0)
 	if is_automated():
-		return "%s — esmagando sozinho (%d%%)" % [base, pct]
-	return "%s — [Esq] pisar  •  extração %d%%  •  [Dir] enviar mosto%s" % [base, pct, upgrade_hint()]
+		return "%s — crushing on its own (%d%%)" % [base, pct]
+	return "%s — [LMB] stomp  •  extraction %d%%  •  [RMB] send must%s" % [base, pct, upgrade_hint()]

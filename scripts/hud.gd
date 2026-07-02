@@ -1,6 +1,6 @@
 extends CanvasLayer
-## HUD: vinheta atmosférica, mira com feedback de alvo e painel de contexto.
-## Escuta os sinais do singleton Interaction, sem acoplar ao Player.
+## HUD: atmospheric vignette, crosshair with target feedback, and context panel.
+## Listens to the Interaction singleton's signals, without coupling to Player.
 
 @onready var crosshair: Control = $Crosshair
 @onready var prompt_panel: PanelContainer = $PromptPanel

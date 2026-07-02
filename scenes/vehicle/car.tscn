@@ -136,5 +136,5 @@ theme_override_font_sizes/font_size = 22
 
 [node name="Gear" type="Label" parent="CarHUD/Panel/VBox"]
 layout_mode = 2
-text = "Marcha: N"
+text = "Gear: N"
 theme_override_font_sizes/font_size = 18

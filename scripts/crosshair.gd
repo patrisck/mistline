@@ -1,6 +1,6 @@
 extends Control
-## Mira desenhada por código. Quando há um alvo interativo sob a mira, ela muda
-## de um ponto discreto para um anel + ponto na cor de destaque (feedback claro).
+## Crosshair drawn by code. When an interactive target is under it, it changes
+## from a discreet dot to a ring + dot in the accent color (clear feedback).
 
 @export var idle_color: Color = Color(0.9, 0.9, 0.92, 0.4)
 @export var active_color: Color = Color(0.86, 0.42, 0.26, 0.95)

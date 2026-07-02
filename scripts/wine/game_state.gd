@@ -1,7 +1,7 @@
 extends Node
-## Estado global do jogo (autoload "GameState").
-## Por enquanto guarda o dinheiro do jogador; vira o hub da economia
-## (preços, reputação, desbloqueios) conforme o jogo cresce.
+## Global game state (autoload "GameState").
+## For now just holds the player's money; becomes the economy hub
+## (prices, reputation, unlocks) as the game grows.
 
 signal money_changed(new_amount: int)
 
@@ -13,7 +13,7 @@ func add_money(amount: int) -> void:
 	money_changed.emit(money)
 
 
-## Tenta gastar; retorna true se tinha saldo.
+## Tries to spend; returns true if there was enough balance.
 func spend(amount: int) -> bool:
 	if money < amount:
 		return false

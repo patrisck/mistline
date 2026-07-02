@@ -1,12 +1,12 @@
 extends Pickable
 class_name WineBottle
-## Garrafa de vinho — produto final carregável. Leve até o balcão pra vender.
+## Bottle of wine — carryable final product. Take it to the counter to sell.
 
-## Qualidade do vinho (0..100). Define o preço de venda.
+## Wine quality (0..100). Determines the sale price.
 @export var quality: float = 50.0
-## Nome/safra (futuro: o jogador batiza).
-@export var wine_name: String = "Vinho da casa"
+## Name/vintage (future: the player names it).
+@export var wine_name: String = "House wine"
 
 
 func get_prompt() -> String:
-	return "Pegar %s (qualidade %d)" % [wine_name, int(quality)]
+	return "Pick up %s (quality %d)" % [wine_name, int(quality)]

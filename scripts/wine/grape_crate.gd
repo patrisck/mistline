@@ -1,12 +1,12 @@
 extends Pickable
 class_name GrapeCrate
-## Caixa de uvas — insumo carregável. Leve até o esmagador e despeje (clique).
+## Crate of grapes — carryable input. Take it to the crusher and pour it (click).
 
-## Qualidade média das uvas (0..100). Semeia a qualidade do lote.
+## Average grape quality (0..100). Seeds the batch's quality.
 @export var grape_quality: float = 60.0
-## Litros de mosto que esta caixa rende.
+## Liters of must this crate yields.
 @export var liters: float = 1.5
 
 
 func get_prompt() -> String:
-	return "Pegar uvas (qualidade %d)" % int(grape_quality)
+	return "Pick up grapes (quality %d)" % int(grape_quality)

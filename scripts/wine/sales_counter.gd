@@ -1,8 +1,8 @@
 extends Station
 class_name SalesCounter
-## Balcão de venda. Segure uma garrafa e clique pra vender. Preço = qualidade.
+## Sales counter. Hold a bottle and click to sell. Price = quality.
 
-## Dinheiro por ponto de qualidade da garrafa.
+## Money per point of bottle quality.
 @export var price_per_quality: float = 0.9
 
 
@@ -15,4 +15,4 @@ func interact(player: Node) -> void:
 
 
 func get_prompt() -> String:
-	return "Balcão — segure uma garrafa e [Esq] pra vender"
+	return "Counter — hold a bottle and [LMB] to sell"

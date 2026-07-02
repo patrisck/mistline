@@ -1,133 +1,138 @@
 # Mistline
 
-Jogo de **produção de vinho artesanal** em primeira pessoa, num vale sombrio e
-enevoado — inspirado no ofício tátil de *Mon Bazou* / *My Summer Car*. Feito na
-**Godot Engine 4.7** com **GDScript**.
+A **first-person artisanal wine-making game** set in a moody, foggy valley —
+inspired by the tactile craft of *Mon Bazou* / *My Summer Car*. Built in
+**Godot Engine 4.7** with **GDScript**.
 
-> Estágio atual: **mecânicas base + fundação do sistema de vinho**. Gráficos são
-> placeholders (primitivas); o foco é a fundação técnica e a atmosfera (luz/névoa).
+> Current stage: **base mechanics + wine system foundation**. Graphics are
+> placeholders (primitives); the focus is the technical foundation and the
+> atmosphere (light/fog).
 
-## O que já funciona
+## What already works
 
-- **Personagem em 1ª pessoa** — `CharacterBody3D` com movimento WASD, corrida,
-  pulo e gravidade.
-- **Câmera mouse-look** — o corpo gira no eixo horizontal, a cabeça no vertical
-  (com limite de inclinação). Mouse capturado, `Esc` libera/recaptura.
-- **Interação por raycast (clique esquerdo)**:
-  - **Abrir / fechar portas** (física, empurra o jogador corretamente).
-  - **Pegar itens com física** — um por vez. O item é carregado por controle de
-    velocidade, então ele colide com paredes e cai se ficar preso.
-- **Girar item** no próprio eixo com o **scroll** do mouse enquanto segura.
-- **Arremessar** o item segurado (clique direito).
-- **HUD** com mira que reage a alvos interativos, painel de contexto e vinheta.
-- **Atmosfera sombria** — neblina volumétrica, tonemapping AgX, iluminação de
-  clima (sol frio + lâmpadas quentes de trabalho). Foco visual em luz, não em texturas.
-- **Ciclo de dia e noite** — o sol arca pelo céu mudando cor/energia da luz, do
-  ambiente e da névoa. Neblina fica **visível de dia** (cor mais clara). Duração e
-  hora inicial ajustáveis no nó `DayNightCycle`.
-- **Menu de debug (`F1`)** — edita parâmetros em tempo real por sliders/toggles
-  (velocidades, sensibilidade, névoa, glow, luzes, hora do dia, vinho...) e imprime
-  os valores no console pra você cravar depois. Sistema genérico e reutilizável.
-- **🍷 Sistema de vinho (MVP)** — o ciclo completo, todo manual (tier 0):
-  1. **Depósito de uvas** — compre uma caixa ($).
-  2. **Esmagador** — despeje as uvas, pise (clique esq) e envie o mosto (clique dir).
-     A qualidade da extração tem um ponto ideal (~85%): nem cru, nem amargo.
-  3. **Fermentador** — adicione levedura e mantenha a temperatura na faixa (clique
-     pra atiçar o calor); no fim, engarrafe.
-  4. **Balcão** — leve as garrafas e venda. Preço = qualidade.
-  - **Progressão simples → automático:** cada estação sobe de tier pagando (`U`).
-    Esmagador vira automático; fermentador ganha temperatura automática e depois
-    engarrafamento automático.
-- **🚗 Carro (simcade)** — `VehicleBody3D` com suspensão raycast, entrar/sair,
-  câmera em 1ª pessoa no banco, volante e **caixa manual** (marchas R/N/1–5).
-  Física arcade-realista, autocontido (assume o input ao dirigir).
-- **Mapa de teste** — garagem que virou vinícola (4 estações) + um carro do lado de fora.
+- **First-person character** — `CharacterBody3D` with WASD movement, sprint,
+  jump, and gravity.
+- **Mouse-look camera** — the body yaws horizontally, the head pitches vertically
+  (with a tilt limit). Mouse captured, `Esc` releases/recaptures.
+- **Raycast interaction (left click)**:
+  - **Open / close doors** (physics-based, pushes the player correctly).
+  - **Pick up physics items** — one at a time. The item is carried via velocity
+    control, so it collides with walls and drops if it gets stuck.
+- **Rotate the held item** on its own axis with the mouse **scroll**.
+- **Throw** the held item (right click).
+- **HUD** with a crosshair that reacts to interactive targets, a context panel, and a vignette.
+- **Moody atmosphere** — volumetric fog, AgX tonemapping, mood lighting
+  (cool sun + warm work lamps). Visual focus on light, not textures.
+- **Day/night cycle** — the sun arcs across the sky, crossfading light, ambient,
+  and fog color/energy. Fog stays **visible during the day** (lighter color).
+  Duration and starting time adjustable on the `DayNightCycle` node.
+- **Debug menu (`F1`)** — edits parameters in real time via sliders/toggles
+  (speeds, sensitivity, fog, glow, lights, time of day, wine...) and prints
+  the values to the console so you can lock them in later. Generic, reusable system.
+- **🍷 Wine system (MVP)** — the full cycle, all manual (tier 0):
+  1. **Grape bin** — buy a crate ($).
+  2. **Crusher** — pour the grapes, stomp (LMB), and send the must (RMB).
+     Extraction quality has a sweet spot (~85%): neither raw nor bitter.
+  3. **Fermenter** — add yeast and keep the temperature in range (click to
+     stoke the heat); bottle it when done.
+  4. **Counter** — carry the bottles and sell. Price = quality.
+  - **Simple → automated progression:** each station levels up by paying (`U`).
+    The crusher becomes automatic; the fermenter gains automatic temperature and
+    later automatic bottling.
+- **🚗 Car (simcade)** — `VehicleBody3D` with raycast suspension, enter/exit,
+  first-person camera in the seat, steering, and a **manual gearbox** (R/N/1–5 gears).
+  Arcade-realistic physics, self-contained (takes over input while driving).
+- **Test map** — a garage turned winery (4 stations) + a car parked outside.
 
-## Controles
+## Controls
 
-| Ação | Tecla / Botão |
-|------|---------------|
-| Mover | `W` `A` `S` `D` |
-| Correr | `Shift` |
-| Pular | `Espaço` |
-| Olhar | Mouse |
-| Interagir / Pegar / Soltar | **Botão esquerdo** do mouse |
-| Girar item segurado | **Scroll** do mouse |
-| Arremessar item / ação secundária da estação (enviar mosto) | **Botão direito** do mouse |
-| Melhorar (upgrade) a estação sob a mira | `U` |
-| Liberar/recapturar mouse | `Esc` |
-| Abrir/fechar menu de debug | `F1` |
-| Entrar no carro / sair | **Botão esquerdo** / `F` |
-| Dirigir | `W` acelera · `S` freia · `A`/`D` esterça · `Espaço` freio de mão |
-| Trocar marcha (sobe / desce) | `E` / `Q` |
+| Action | Key / Button |
+|--------|--------------|
+| Move | `W` `A` `S` `D` |
+| Sprint | `Shift` |
+| Jump | `Space` |
+| Look | Mouse |
+| Interact / Pick up / Drop | **Left click** |
+| Rotate held item | **Mouse scroll** |
+| Throw item / station's secondary action (send must) | **Right click** |
+| Upgrade the station under the crosshair | `U` |
+| Release/recapture mouse | `Esc` |
+| Open/close debug menu | `F1` |
+| Enter car / exit | **Left click** / `F` |
+| Drive | `W` throttle · `S` brake · `A`/`D` steer · `Space` handbrake |
+| Shift gear (up / down) | `E` / `Q` |
 
-## Como rodar
+## How to run
 
-1. Abra o projeto na **Godot 4.7** (`Import` → selecione a pasta / `project.godot`).
-2. Pressione **F5** (ou o botão ▶ *Run Project*).
+1. Open the project in **Godot 4.7** (`Import` → select the folder / `project.godot`).
+2. Press **F5** (or the ▶ *Run Project* button).
 
-A cena inicial é `scenes/world/test_map.tscn`.
+The starting scene is `scenes/world/test_map.tscn`.
 
-## Estrutura do projeto
+## Project structure
 
 ```
 mistline/
-├── project.godot            # Config, input map, camadas de física, autoloads
+├── project.godot            # Config, input map, physics layers, autoloads
 ├── icon.svg
 ├── scenes/
-│   ├── player/player.tscn        # Personagem 1ª pessoa
-│   ├── world/test_map.tscn       # Mapa de teste (cena principal)
+│   ├── player/player.tscn        # First-person character
+│   ├── world/test_map.tscn       # Test map (main scene)
 │   ├── interactables/
-│   │   ├── door.tscn             # Porta articulada
-│   │   ├── pickable_crate.tscn   # Caixa pegável
-│   │   └── pickable_wheel.tscn   # Pneu pegável
-│   ├── wine/                     # Estações e itens da vinícola
+│   │   ├── door.tscn             # Hinged door
+│   │   ├── pickable_crate.tscn   # Pickable crate
+│   │   └── pickable_wheel.tscn   # Pickable tire
+│   ├── wine/                     # Winery stations and items
 │   │   ├── grape_bin.tscn · crusher.tscn · fermenter.tscn · sales_counter.tscn
 │   │   └── grape_crate.tscn · wine_bottle.tscn
-│   └── ui/hud.tscn               # Mira + prompt + dinheiro
+│   ├── vehicle/car.tscn          # Simcade car
+│   └── ui/hud.tscn               # Crosshair + prompt + money
 ├── scripts/
-│   ├── interaction_manager.gd    # Autoload: barramento de sinais Player↔UI
-│   ├── player.gd                 # Controlador + carregar/girar item
+│   ├── interaction_manager.gd    # Autoload: Player↔UI signal bus
+│   ├── player.gd                 # Controller + carry/rotate item + vehicle hooks
 │   ├── hud.gd                    # HUD
-│   ├── crosshair.gd              # Mira desenhada por código (feedback de alvo)
-│   ├── day_night_cycle.gd        # Ciclo de dia/noite (sol, ambiente, névoa)
-│   ├── debug_menu.gd             # Autoload: menu de debug genérico (F1)
-│   ├── debug_bindings.gd         # Registra os parâmetros do mapa no menu
+│   ├── crosshair.gd              # Code-drawn crosshair (target feedback)
+│   ├── day_night_cycle.gd        # Day/night cycle (sun, ambient, fog)
+│   ├── debug_menu.gd             # Autoload: generic debug menu (F1)
+│   ├── debug_bindings.gd         # Registers this map's parameters with the menu
 │   ├── interactables/
 │   │   ├── door.gd
 │   │   └── pickable.gd
-│   └── wine/                     # Sistema de vinho
-│       ├── game_state.gd         # Autoload: economia (dinheiro)
-│       ├── wine_batch.gd         # O "lote" (dados que fluem entre estações)
-│       ├── station.gd            # Base: tiers + upgrade (manual → automático)
+│   ├── vehicle/
+│   │   └── car.gd                # VehicleBody3D controller
+│   └── wine/                     # Wine system
+│       ├── game_state.gd         # Autoload: economy (money)
+│       ├── wine_batch.gd         # The "batch" (data flowing between stations)
+│       ├── station.gd            # Base: tiers + upgrade (manual → automated)
 │       ├── grape_bin.gd · crusher.gd · fermenter.gd · sales_counter.gd
 │       └── grape_crate.gd · wine_bottle.gd
 └── assets/
-    └── shaders/vignette.gdshader # Vinheta atmosférica do HUD
+    └── shaders/vignette.gdshader # HUD's atmospheric vignette
 ```
 
-### Convenção de interação
+### Interaction convention
 
-Qualquer objeto interativo:
-- fica no grupo `interactable` (portas) ou `pickable` (itens);
-- implementa `interact(player)` e/ou `get_prompt() -> String`.
+Any interactive object:
+- belongs to the `interactable` group (doors, stations) or `pickable` (items);
+- implements `interact(player)` and/or `get_prompt() -> String`.
 
-O `Player` faz o raycast, identifica o alvo e chama esses métodos — então adicionar
-um novo objeto interativo não exige mexer no player.
+The `Player` does the raycast, finds the target, and calls these methods — so
+adding a new interactive object doesn't require touching the player.
 
-## Camadas de física
+## Physics layers
 
-| Camada | Uso |
-|--------|-----|
-| 1 | `world` (chão, paredes, objetos sólidos) |
+| Layer | Use |
+|-------|-----|
+| 1 | `world` (floor, walls, solid objects) |
 | 2 | `player` |
-| 3 | `interactable` (portas e itens) |
+| 3 | `interactable` (doors, stations, items) |
 
-## Próximas etapas (planejado)
+## Next steps (planned)
 
-- Sistema de veículo (chassi, rodas, motor) e montagem/desmontagem de peças.
-- Inventário / ferramentas.
-- Arte low-poly definitiva.
+- Barrel aging (carry physical barrels), grape styles/blends, own vineyard tied
+  to the day/night cycle, more automation tiers.
+- Inventory / tools.
+- Final low-poly art.
 
 ---
-🤖 Base técnica criada com [Claude Code](https://claude.com/claude-code)
+🤖 Technical foundation built with [Claude Code](https://claude.com/claude-code)

@@ -1,13 +1,13 @@
 extends AnimatableBody3D
 class_name Door
-## Porta que abre/fecha com o clique esquerdo.
-## A origem do nó fica na dobradiça; a malha e o colisor ficam deslocados em +X.
-## Usa AnimatableBody3D + Tween no passo de física para empurrar corpos
-## corretamente (o jogador não atravessa a porta).
+## Door that opens/closes with the left click.
+## The node's origin is at the hinge; the mesh and collider are offset on +X.
+## Uses AnimatableBody3D + Tween in the physics step to push bodies
+## correctly (the player doesn't clip through the door).
 
-## Ângulo de abertura em graus.
+## Opening angle in degrees.
 @export var open_angle_deg: float = 110.0
-## Duração da animação de abrir/fechar (segundos).
+## Duration of the open/close animation (seconds).
 @export var swing_time: float = 0.5
 
 var _is_open: bool = false
@@ -17,7 +17,7 @@ var _tween: Tween
 
 func _ready() -> void:
 	_closed_rot_y = rotation.y
-	# Movida via tween no passo de física -> empurra corpos físicos.
+	# Moved via tween in the physics step -> pushes physics bodies.
 	sync_to_physics = true
 	add_to_group("interactable")
 
@@ -38,4 +38,4 @@ func interact(_player: Node) -> void:
 
 
 func get_prompt() -> String:
-	return "Fechar porta" if _is_open else "Abrir porta"
+	return "Close door" if _is_open else "Open door"

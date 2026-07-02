@@ -1,33 +1,33 @@
 extends Node
-## Ciclo de dia e noite.
-## Arca o sol (DirectionalLight3D) ao longo do tempo e cruza cor/energia da luz,
-## da luz ambiente e da névoa entre estados de dia e noite. A neblina é mantida
-## VISÍVEL de dia (densidade constante, cor mais clara), conforme pedido.
+## Day/night cycle.
+## Arcs the sun (DirectionalLight3D) over time and crossfades sun/ambient/fog
+## light color and energy between day and night states. Fog stays VISIBLE
+## during the day (constant density, lighter color), as requested.
 ##
-## O céu procedural desenha o disco do sol na direção da luz automaticamente,
-## então o pôr/nascer do sol e o brilho no horizonte saem "de graça".
+## The procedural sky draws the sun disc in the light's direction automatically,
+## so sunrise/sunset and horizon glow come "for free".
 
-## Duração de um dia completo (segundos). Ajuste no inspetor para testar.
+## Length of a full day (seconds). Adjust in the inspector for testing.
 @export var day_length_seconds: float = 120.0
-## Hora inicial no ciclo: 0=meia-noite, 0.25=amanhecer, 0.5=meio-dia, 0.75=entardecer.
+## Starting time in the cycle: 0=midnight, 0.25=sunrise, 0.5=noon, 0.75=sunset.
 @export_range(0.0, 1.0) var start_time: float = 0.32
-## Pausa o ciclo (deixa a hora fixa em start_time).
+## Pauses the cycle (keeps time fixed at start_time).
 @export var paused: bool = false
-## Azimute do sol (direção no plano horizontal), em graus.
+## Sun azimuth (direction on the horizontal plane), in degrees.
 @export var sun_azimuth_deg: float = -35.0
 
-@export_group("Sol")
+@export_group("Sun")
 @export var day_sun_color: Color = Color(0.92, 0.94, 1.0)
 @export var dusk_sun_color: Color = Color(1.0, 0.55, 0.3)
 @export var day_sun_energy: float = 1.7
 
-@export_group("Ambiente / Névoa")
+@export_group("Ambient / Fog")
 @export var day_ambient_energy: float = 1.0
 @export var night_ambient_energy: float = 0.12
 @export var day_fog_color: Color = Color(0.66, 0.7, 0.76)
 @export var night_fog_color: Color = Color(0.1, 0.13, 0.2)
 
-@export_group("Referências")
+@export_group("References")
 @export var sun: DirectionalLight3D
 @export var world_environment: WorldEnvironment
 
@@ -37,8 +37,9 @@ var _env: Environment
 
 func _ready() -> void:
 	time_of_day = start_time
-	# Resolve os nós por nome a partir do pai como fallback: NodePath exportado
-	# escrito à mão no .tscn nem sempre resolve (vinha nulo, quebrando o ciclo).
+	# Resolve nodes by name from the parent as a fallback: an exported
+	# NodePath hand-written in the .tscn doesn't always resolve (came back
+	# null, breaking the cycle).
 	var root := get_parent()
 	if root != null:
 		if sun == null:
@@ -48,38 +49,38 @@ func _ready() -> void:
 	if world_environment != null:
 		_env = world_environment.environment
 	if sun == null:
-		push_warning("DayNightCycle: nó 'Sun' (DirectionalLight3D) não encontrado.")
+		push_warning("DayNightCycle: 'Sun' node (DirectionalLight3D) not found.")
 	_apply()
 
 
 func _process(delta: float) -> void:
-	# Avança o tempo só quando não está pausado; mas SEMPRE reaplica, para que
-	# mudanças externas (ex.: scrub da hora pelo menu de debug) tenham efeito
-	# mesmo com o ciclo pausado.
+	# Advance time only when not paused; but ALWAYS reapply, so external
+	# changes (e.g. time scrub from the debug menu) take effect even while
+	# the cycle is paused.
 	if not paused and day_length_seconds > 0.0:
 		time_of_day = fposmod(time_of_day + delta / day_length_seconds, 1.0)
 	_apply()
 
 
 func _apply() -> void:
-	# sun_up: 1 ao meio-dia, 0 no horizonte (amanhecer/entardecer), -1 à meia-noite.
+	# sun_up: 1 at noon, 0 at the horizon (sunrise/sunset), -1 at midnight.
 	var sun_up := sin((time_of_day - 0.25) * TAU)
-	# Quanto é "dia" (0 de noite, 1 de dia), com transição suave no horizonte.
+	# How much it's "day" (0 at night, 1 at day), with a smooth horizon transition.
 	var day_amount := clampf(smoothstep(-0.05, 0.25, sun_up), 0.0, 1.0)
 
 	if sun != null:
-		# Elevação: pitch -90° ao meio-dia (aponta pra baixo), +90° à meia-noite.
+		# Elevation: pitch -90° at noon (points down), +90° at midnight.
 		var pitch := -sun_up * deg_to_rad(90.0)
 		sun.rotation = Vector3(pitch, deg_to_rad(sun_azimuth_deg), 0.0)
 
-		# Cor quente perto do horizonte, neutra/fria com o sol alto.
+		# Warm color near the horizon, neutral/cool with the sun high.
 		var horizon := clampf(1.0 - absf(sun_up) * 2.5, 0.0, 1.0)
 		sun.light_color = day_sun_color.lerp(dusk_sun_color, horizon)
 		sun.light_energy = lerpf(0.0, day_sun_energy, day_amount)
-		# Apaga o sol de noite (evita luz vindo de baixo do chão).
+		# Turns the sun off at night (avoids light coming from below the ground).
 		sun.visible = day_amount > 0.001
 
 	if _env != null:
 		_env.ambient_light_energy = lerpf(night_ambient_energy, day_ambient_energy, day_amount)
-		# Névoa continua presente; só muda de cor (clara de dia, azul escura de noite).
+		# Fog stays present; only its color changes (light by day, dark blue by night).
 		_env.fog_light_color = night_fog_color.lerp(day_fog_color, day_amount)

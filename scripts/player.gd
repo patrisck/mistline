@@ -1,15 +1,15 @@
 extends CharacterBody3D
-## Controlador de personagem em primeira pessoa.
-## - Movimento WASD + corrida + pulo com gravidade (move_and_slide)
-## - Câmera mouse-look (corpo gira no eixo Y, cabeça no eixo X)
-## - Interação por raycast: abrir portas e pegar UM item por vez (física)
+## First-person character controller.
+## - WASD movement + sprint + jump with gravity (move_and_slide)
+## - Mouse-look camera (body yaws on Y, head pitches on X)
+## - Raycast interaction: open doors and pick up ONE item at a time (physics)
 ##
-## O item é carregado por VELOCIDADE (não por reparent/posição direta) para
-## manter o comportamento físico correto e a colisão com paredes, no estilo
-## My Summer Car / Mon Bazou.
+## The item is carried via VELOCITY (not reparenting/direct position) to
+## keep correct physics behavior and collision with walls, My Summer Car /
+## Mon Bazou style.
 
-# --- Movimento ---
-@export_group("Movimento")
+# --- Movement ---
+@export_group("Movement")
 @export var walk_speed: float = 4.0
 @export var sprint_speed: float = 7.0
 @export var acceleration: float = 12.0
@@ -17,21 +17,22 @@ extends CharacterBody3D
 @export var mouse_sensitivity: float = 0.0025
 @export var pitch_limit_deg: float = 89.0
 
-# --- Interação / carregar ---
-@export_group("Interação")
-## Alcance do raycast de interação (metros).
+# --- Interaction / carry ---
+@export_group("Interaction")
+## Interaction raycast range (meters).
 @export var interact_distance: float = 3.0
-## Rigidez do "elástico" que puxa o item até o ponto de segurar.
+## Stiffness of the "elastic" that pulls the item to the hold point.
 @export var carry_stiffness: float = 12.0
-## Velocidade máxima com que o item persegue o ponto de segurar.
+## Max speed the item chases the hold point at.
 @export var carry_max_speed: float = 20.0
-## Se o item ficar mais longe que isto do ponto (preso atrás de algo), solta.
+## If the item ends up farther than this from the hold point (stuck behind
+## something), it's dropped.
 @export var carry_break_distance: float = 2.5
-## Força do arremesso (botão direito).
+## Throw force (right click).
 @export var throw_impulse: float = 8.0
-## Quanto o item gira por "notch" do scroll (radianos). ~12 graus.
+## How much the item rotates per scroll "notch" (radians). ~12 degrees.
 @export var carry_rotate_step: float = 0.209
-## Rigidez do controle de orientação (segura e gira o item de forma estável).
+## Stiffness of the orientation control (holds/rotates the item stably).
 @export var carry_orient_stiffness: float = 10.0
 
 @onready var head: Node3D = $Head
@@ -41,32 +42,32 @@ extends CharacterBody3D
 
 var _held_body: RigidBody3D = null
 var _held_original_gravity: float = 1.0
-## Orientação-alvo do item carregado. O scroll gira este alvo; a física persegue.
+## Target orientation of the carried item. Scroll rotates this target; physics chases it.
 var _carry_basis: Basis = Basis.IDENTITY
 
 
 func _ready() -> void:
 	Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 	interact_ray.target_position = Vector3(0, 0, -interact_distance)
-	camera.current = true  # garante a visão do player (não a do carro) ao nascer
+	camera.current = true  # ensures the player's view (not the car's) on spawn
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	# Mouse-look só quando o mouse está capturado.
+	# Mouse-look only while the mouse is captured.
 	if event is InputEventMouseMotion and Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 		rotate_y(-event.relative.x * mouse_sensitivity)
 		head.rotate_x(-event.relative.y * mouse_sensitivity)
 		var limit := deg_to_rad(pitch_limit_deg)
 		head.rotation.x = clamp(head.rotation.x, -limit, limit)
 
-	# Esc alterna captura do mouse (útil pra sair da janela).
+	# Esc toggles mouse capture (useful to leave the window).
 	if event.is_action_pressed("ui_cancel"):
 		if Input.mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.mouse_mode = Input.MOUSE_MODE_VISIBLE
 		else:
 			Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 
-	# Recaptura ao clicar de volta na janela.
+	# Recapture on click back into the window.
 	if event.is_action_pressed("interact") and Input.mouse_mode == Input.MOUSE_MODE_VISIBLE:
 		Input.mouse_mode = Input.MOUSE_MODE_CAPTURED
 		return
@@ -76,14 +77,14 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("throw"):
 		_on_throw()
 
-	# Scroll do mouse gira o item segurado no próprio eixo (vertical).
+	# Mouse scroll rotates the held item on its own axis (vertical).
 	if _held_body != null and event is InputEventMouseButton and event.pressed:
 		if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 			_rotate_held(1.0)
 		elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 			_rotate_held(-1.0)
 
-	# Tecla U: melhorar (upgrade) a estação sob a mira.
+	# U key: upgrade the station under the crosshair.
 	if event is InputEventKey and event.pressed and not event.echo and event.keycode == KEY_U:
 		var t := _get_interactable()
 		if t != null and t.has_method("try_upgrade"):
@@ -116,15 +117,15 @@ func _handle_movement(delta: float) -> void:
 
 
 # --------------------------------------------------------------------------
-# Interação
+# Interaction
 # --------------------------------------------------------------------------
 
 func _on_interact() -> void:
 	var target := _get_interactable()
 
-	# Com item na mão: se o alvo é interativo mas NÃO é um item (ex.: uma
-	# estação), deixa ele usar o que você segura (despejar uvas, vender...).
-	# Caso contrário, solta o item.
+	# With an item in hand: if the target is interactive but NOT an item
+	# (e.g. a station), let it use whatever you're holding (pour grapes,
+	# sell...). Otherwise, drop the item.
 	if _held_body != null:
 		if target != null and target != _held_body and target.has_method("interact") \
 				and not target.is_in_group("pickable"):
@@ -143,8 +144,8 @@ func _on_interact() -> void:
 
 
 func _on_throw() -> void:
-	# Sem item na mão: clique-direito é a "ação secundária" da estação sob a
-	# mira (ex.: enviar o mosto pro fermentador).
+	# No item in hand: right-click is the "secondary action" of the station
+	# under the crosshair (e.g. send the must to the fermenter).
 	if _held_body == null:
 		var target := _get_interactable()
 		if target != null and target.has_method("secondary_interact"):
@@ -156,7 +157,7 @@ func _on_throw() -> void:
 	body.apply_central_impulse(dir * throw_impulse)
 
 
-## Retorna o nó interativo sob a mira, ou null.
+## Returns the interactive node under the crosshair, or null.
 func _get_interactable() -> Node:
 	if not interact_ray.is_colliding():
 		return null
@@ -171,17 +172,17 @@ func _pick_up(body: RigidBody3D) -> void:
 	_held_original_gravity = body.gravity_scale
 	body.gravity_scale = 0.0
 	body.sleeping = false
-	# Começa a segurar mantendo a orientação atual do item.
+	# Start holding while keeping the item's current orientation.
 	_carry_basis = body.global_transform.basis.orthonormalized()
-	# Não colidir com o próprio jogador enquanto carrega (evita empurrão/jitter).
+	# Don't collide with the player while carrying (avoids push/jitter).
 	body.add_collision_exception_with(self)
-	# O item na mão não deve bloquear o raycast de interação.
+	# The held item shouldn't block the interaction raycast.
 	interact_ray.add_exception(body)
 	Interaction.notify_hold_state(true)
 
 
-## Gira o alvo de orientação do item "por cima" (tombando pra frente/trás),
-## em torno do eixo horizontal à direita da câmera — não mais no eixo vertical.
+## Rotates the item's orientation target "over the top" (tipping forward/back),
+## around the camera's horizontal right axis — no longer the vertical axis.
 func _rotate_held(direction: float) -> void:
 	var axis := camera.global_transform.basis.x.normalized()
 	_carry_basis = Basis(axis, direction * carry_rotate_step) * _carry_basis
@@ -198,13 +199,13 @@ func _drop() -> void:
 	Interaction.notify_hold_state(false)
 
 
-## Item atualmente na mão (ou null). Usado pelas estações.
+## Item currently in hand (or null). Used by stations.
 func get_held() -> RigidBody3D:
 	return _held_body
 
 
-## Remove o item da mão (pra uma estação consumir) sem soltá-lo no chão e o
-## retorna, restaurando a física do corpo.
+## Removes the item from the hand (for a station to consume) without dropping
+## it on the ground, and returns it, restoring the body's physics.
 func take_held() -> RigidBody3D:
 	if _held_body == null:
 		return null
@@ -217,7 +218,7 @@ func take_held() -> RigidBody3D:
 	return b
 
 
-## Desativa o jogador enquanto ele dirige (o carro assume câmera e input).
+## Disables the player while driving (the car takes over camera and input).
 func enter_vehicle() -> void:
 	if _held_body != null:
 		_drop()
@@ -228,7 +229,7 @@ func enter_vehicle() -> void:
 	set_process_unhandled_input(false)
 
 
-## Reativa o jogador ao sair do carro, posicionando-o em `at`.
+## Re-enables the player when exiting the car, positioning them at `at`.
 func exit_vehicle(at: Transform3D) -> void:
 	global_transform = at
 	velocity = Vector3.ZERO
@@ -239,34 +240,35 @@ func exit_vehicle(at: Transform3D) -> void:
 	camera.current = true
 
 
-## Move o item carregado em direção ao ponto de segurar usando velocidade.
-## Roda no passo de física para o controle de velocidade ficar estável.
+## Moves the carried item toward the hold point using velocity.
+## Runs in the physics step for stable velocity control.
 func _update_carry() -> void:
 	if _held_body == null:
 		return
 
 	var to_target := hold_point.global_position - _held_body.global_position
 
-	# Se o item ficou preso atrás de algo (muito longe), solta.
+	# If the item got stuck behind something (too far), drop it.
 	if to_target.length() > carry_break_distance:
 		_drop()
 		return
 
-	# Elástico: velocidade proporcional à distância, com teto.
+	# Elastic: velocity proportional to distance, with a cap.
 	var desired_velocity := to_target * carry_stiffness
 	if desired_velocity.length() > carry_max_speed:
 		desired_velocity = desired_velocity.normalized() * carry_max_speed
 
 	_held_body.linear_velocity = desired_velocity
 
-	# Controle de orientação: gira o item até a orientação-alvo (_carry_basis),
-	# convertendo a diferença de rotação em velocidade angular. Assim o item
-	# fica estável na mão e responde ao scroll sem "cair" pra qualquer lado.
+	# Orientation control: rotates the item toward the target orientation
+	# (_carry_basis), converting the rotation delta into angular velocity.
+	# This keeps the item stable in hand and responsive to scroll without
+	# flopping around.
 	var current_q := _held_body.global_transform.basis.get_rotation_quaternion()
 	var target_q := _carry_basis.get_rotation_quaternion()
 	var delta_q := target_q * current_q.inverse()
 	if delta_q.w < 0.0:
-		delta_q = -delta_q  # caminho mais curto
+		delta_q = -delta_q  # shortest path
 	var angle := 2.0 * acos(clampf(delta_q.w, -1.0, 1.0))
 	var axis := Vector3(delta_q.x, delta_q.y, delta_q.z)
 	if angle > 0.0001 and axis.length() > 0.0001:
@@ -277,7 +279,7 @@ func _update_carry() -> void:
 
 func _update_prompt() -> void:
 	if _held_body != null:
-		Interaction.set_prompt("[Esq] Soltar     [Scroll] Girar     [Dir] Arremessar")
+		Interaction.set_prompt("[LMB] Drop     [Scroll] Rotate     [RMB] Throw")
 		return
 
 	var target := _get_interactable()
@@ -286,8 +288,8 @@ func _update_prompt() -> void:
 		return
 
 	if target.has_method("get_prompt"):
-		Interaction.set_prompt("[Esq] " + target.get_prompt())
+		Interaction.set_prompt("[LMB] " + target.get_prompt())
 	elif target.is_in_group("pickable"):
-		Interaction.set_prompt("[Esq] Pegar")
+		Interaction.set_prompt("[LMB] Pick up")
 	else:
-		Interaction.set_prompt("[Esq] Interagir")
+		Interaction.set_prompt("[LMB] Interact")

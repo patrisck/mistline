@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Mistline"
-config/description="Simulador de reforma automotiva (protótipo de mecânicas). Estilo Mon Bazou / My Summer Car."
+config/description="Artisanal wine-making game in a moody, foggy valley. First-person, Mon Bazou / My Summer Car style."
 run/main_scene="res://scenes/world/test_map.tscn"
 config/features=PackedStringArray("4.7", "Forward Plus")
 config/icon="res://icon.svg"

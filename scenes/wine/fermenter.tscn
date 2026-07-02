@@ -20,7 +20,7 @@ radius = 0.45
 collision_layer = 5
 collision_mask = 1
 script = ExtResource("1_fm")
-display_name = "Fermentador"
+display_name = "Fermenter"
 max_tier = 2
 upgrade_costs = PackedInt32Array(200, 500)
 

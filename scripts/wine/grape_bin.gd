@@ -1,6 +1,6 @@
 extends Station
 class_name GrapeBin
-## Depósito de uvas — a fonte de insumo. [Esq] compra uma caixa; ela cai na saída.
+## Grape bin — the input source. [LMB] buys a crate; it drops at the output.
 
 const GRAPE_CRATE_SCENE := preload("res://scenes/wine/grape_crate.tscn")
 
@@ -25,4 +25,4 @@ func interact(_player: Node) -> void:
 
 
 func get_prompt() -> String:
-	return "Depósito de uvas — [Esq] comprar caixa ($%d)" % cost
+	return "Grape bin — [LMB] buy crate ($%d)" % cost

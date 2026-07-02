@@ -1,20 +1,20 @@
 extends CanvasLayer
-## Menu de debug in-game (tecla F1). Edita parâmetros do jogo em TEMPO REAL.
+## In-game debug menu (F1 key). Edits game parameters in REAL TIME.
 ##
-## Genérico e reutilizável: qualquer script registra parâmetros com
-## add_float / add_bool / add_action (agrupados por seção). Autoload "DebugMenu".
+## Generic and reusable: any script registers parameters with
+## add_float / add_bool / add_action (grouped by section). Autoload "DebugMenu".
 ##
-## O botão "Imprimir valores" joga os valores atuais no console, pra você
-## capturar o que calibrou e cravar no código/cena depois.
+## The "Print values" button dumps the current values to the console, so you
+## can capture what you calibrated and lock it into code/scene afterward.
 
 const ACCENT := Color(0.86, 0.45, 0.28)
 const TOGGLE_KEY := KEY_F1
 
 var is_open: bool = false
 
-var _entries: Array = []            # cada item: Dictionary com type/section/label/...
-var _rows: Array = []               # controles vivos, pra refresh por frame
-var _dragging: Dictionary = {}      # slider -> bool (usuário arrastando?)
+var _entries: Array = []            # each item: Dictionary with type/section/label/...
+var _rows: Array = []               # live controls, for per-frame refresh
+var _dragging: Dictionary = {}      # slider -> bool (is the user dragging?)
 var _root: Control
 var _list: VBoxContainer
 
@@ -28,7 +28,7 @@ func _ready() -> void:
 
 
 # --------------------------------------------------------------------------
-# API pública (chamada pelos scripts que querem expor parâmetros)
+# Public API (called by scripts that want to expose parameters)
 # --------------------------------------------------------------------------
 
 func clear_params() -> void:
@@ -63,7 +63,7 @@ func get_param_count() -> int:
 
 
 # --------------------------------------------------------------------------
-# Abertura / entrada
+# Opening / input
 # --------------------------------------------------------------------------
 
 func _input(event: InputEvent) -> void:
@@ -98,8 +98,8 @@ func close() -> void:
 
 
 func _process(_delta: float) -> void:
-	# Mantém os controles em sincronia com valores que mudam sozinhos
-	# (ex.: hora do dia avançando com o ciclo).
+	# Keeps controls in sync with values that change on their own
+	# (e.g. time of day advancing with the cycle).
 	for row in _rows:
 		if row.type == "float":
 			if _dragging.get(row.slider, false):
@@ -112,7 +112,7 @@ func _process(_delta: float) -> void:
 
 
 # --------------------------------------------------------------------------
-# Construção da UI
+# UI construction
 # --------------------------------------------------------------------------
 
 func _build_frame() -> void:
@@ -141,13 +141,13 @@ func _build_frame() -> void:
 	panel.add_child(vb)
 
 	var title := Label.new()
-	title.text = "DEBUG  ·  F1 abre/fecha"
+	title.text = "DEBUG  ·  F1 opens/closes"
 	title.add_theme_color_override("font_color", ACCENT)
 	title.add_theme_font_size_override("font_size", 16)
 	vb.add_child(title)
 
 	var print_btn := Button.new()
-	print_btn.text = "Imprimir valores no console"
+	print_btn.text = "Print values to console"
 	print_btn.pressed.connect(_print_values)
 	vb.add_child(print_btn)
 
@@ -249,7 +249,7 @@ func _make_action_row(e: Dictionary) -> void:
 
 
 # --------------------------------------------------------------------------
-# Callbacks (sem closures — usam bind pra passar o contexto)
+# Callbacks (no closures — use bind to pass context)
 # --------------------------------------------------------------------------
 
 func _on_slider_changed(value: float, e: Dictionary, val_lbl: Label) -> void:
@@ -270,7 +270,7 @@ func _on_bool_toggled(pressed: bool, e: Dictionary) -> void:
 
 
 func _print_values() -> void:
-	print("--- DEBUG: valores atuais ---")
+	print("--- DEBUG: current values ---")
 	for e in _entries:
 		if e.type == "action":
 			continue

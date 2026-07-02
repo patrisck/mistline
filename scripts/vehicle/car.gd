@@ -1,15 +1,15 @@
 extends VehicleBody3D
 class_name Car
-## Carro simcade (VehicleBody3D = suspensão raycast embutida).
-## Entrar/sair (clique), câmera 1ª pessoa no banco, caixa manual (E/Q), volante.
-## Autocontido: assume o input quando ocupado; o player fica desativado.
+## Simcade car (VehicleBody3D = built-in raycast suspension).
+## Enter/exit (click), first-person camera in the seat, manual gearbox (E/Q), steering.
+## Self-contained: takes over input while occupied; the player is disabled.
 
 @export var max_engine_force: float = 220.0
 @export var max_brake: float = 6.0
 @export var max_steer: float = 0.6
 @export var steer_speed: float = 3.0
 @export var mouse_sensitivity: float = 0.0025
-## índice 0=Ré, 1=Neutro, 2..=1ª..5ª
+## index 0=Reverse, 1=Neutral, 2..=1st..5th
 @export var gear_ratios: Array[float] = [-2.8, 0.0, 2.6, 1.8, 1.3, 1.0, 0.78]
 
 var _occupied: bool = false
@@ -31,7 +31,7 @@ func _ready() -> void:
 
 
 func get_prompt() -> String:
-	return "[Esq] Entrar no carro"
+	return "[LMB] Enter car"
 
 
 func interact(player: Node) -> void:
@@ -87,12 +87,12 @@ func _physics_process(delta: float) -> void:
 	var brake_in := Input.get_action_strength("move_back")
 	var steer_in := Input.get_action_strength("move_left") - Input.get_action_strength("move_right")
 
-	# Sinal invertido: a frente do carro (rodas/câmera) está em -Z, mas
-	# engine_force positivo do VehicleBody3D empurra em +Z.
+	# Sign flipped: the car's front (wheels/camera) is at -Z, but
+	# VehicleBody3D's positive engine_force pushes toward +Z.
 	engine_force = -throttle * max_engine_force * gear_ratios[_gear]
 	brake = brake_in * max_brake
 	if Input.is_action_pressed("jump"):
-		brake = max_brake * 2.5  # freio de mão
+		brake = max_brake * 2.5  # handbrake
 
 	_steer = move_toward(_steer, steer_in * max_steer, steer_speed * delta)
 	steering = _steer
@@ -101,7 +101,7 @@ func _physics_process(delta: float) -> void:
 
 func _update_hud() -> void:
 	_speed_label.text = "%d km/h" % int(linear_velocity.length() * 3.6)
-	_gear_label.text = "Marcha: %s" % _gear_name()
+	_gear_label.text = "Gear: %s" % _gear_name()
 
 
 func _gear_name() -> String:

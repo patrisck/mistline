@@ -1,21 +1,21 @@
 extends StaticBody3D
 class_name Station
-## Base de todas as estações da vinícola.
+## Base for all winery stations.
 ##
-## Implementa o EIXO DE PROGRESSÃO do jogo: cada estação começa no tier 0
-## (100% manual — o jogador opera na mão) e sobe de tier pagando dinheiro,
-## até o tier máximo, onde passa a operar SOZINHA (automação).
+## Implements the game's PROGRESSION AXIS: each station starts at tier 0
+## (100% manual — the player operates it by hand) and levels up by paying
+## money, up to the max tier, where it starts running ON ITS OWN (automation).
 ##
-## Contrato de interação (igual portas/itens): grupo "interactable" +
-## métodos interact(player) / get_prompt(). Upgrade via try_upgrade() (tecla U).
+## Interaction contract (same as doors/items): "interactable" group +
+## interact(player) / get_prompt() methods. Upgrade via try_upgrade() (U key).
 
-@export var display_name: String = "Estação"
-## Tier atual: 0 = manual. Subir aumenta velocidade/qualidade; no máximo, automatiza.
+@export var display_name: String = "Station"
+## Current tier: 0 = manual. Leveling up increases speed/quality; at max, it automates.
 @export var tier: int = 0
-## Tier máximo desta estação (definido por subclasse/cena).
+## Max tier for this station (set by subclass/scene).
 @export var max_tier: int = 1
-## Custo pra subir de cada tier (índice = tier atual). Ex.: [150, 400] = 150 do
-## tier 0->1, 400 do 1->2.
+## Cost to level up from each tier (index = current tier). E.g.: [150, 400] = 150
+## for tier 0->1, 400 for 1->2.
 @export var upgrade_costs: PackedInt32Array = PackedInt32Array([150])
 
 
@@ -24,7 +24,7 @@ func _ready() -> void:
 	_on_ready()
 
 
-# --- Contrato de interação (subclasses sobrescrevem) ---
+# --- Interaction contract (subclasses override) ---
 
 func interact(_player: Node) -> void:
 	pass
@@ -34,21 +34,21 @@ func get_prompt() -> String:
 	return display_name
 
 
-# --- Progressão / upgrade ---
+# --- Progression / upgrade ---
 
-## Já opera sozinha?
+## Already running on its own?
 func is_automated() -> bool:
 	return tier >= max_tier and max_tier > 0
 
 
-## Custo pra subir pro próximo tier, ou -1 se já no máximo.
+## Cost to reach the next tier, or -1 if already at max.
 func next_upgrade_cost() -> int:
 	if tier >= max_tier or tier >= upgrade_costs.size():
 		return -1
 	return upgrade_costs[tier]
 
 
-## Tenta comprar o próximo tier (tecla U do jogador). Debita do GameState.
+## Tries to buy the next tier (player's U key). Debits from GameState.
 func try_upgrade() -> bool:
 	var cost := next_upgrade_cost()
 	if cost < 0:
@@ -60,22 +60,22 @@ func try_upgrade() -> bool:
 	return true
 
 
-## Texto curto do estado do tier, pra compor o prompt.
+## Short tier-status text, to compose the prompt.
 func tier_label() -> String:
 	if is_automated():
 		return "[AUTO]"
 	return "[tier %d]" % tier
 
 
-## Sufixo de prompt com o hint de upgrade, se houver.
+## Prompt suffix with the upgrade hint, if any.
 func upgrade_hint() -> String:
 	var cost := next_upgrade_cost()
 	if cost < 0:
 		return ""
-	return "   [U] Melhorar $%d" % cost
+	return "   [U] Upgrade $%d" % cost
 
 
-# --- Hooks pras subclasses ---
+# --- Hooks for subclasses ---
 
 func _on_ready() -> void:
 	pass
