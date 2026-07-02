@@ -23,6 +23,8 @@ class_name Car
 @export var rear_grip: float = 2.5
 ## While the handbrake is held, rear grip drops to this (locks the rear -> slide).
 @export var handbrake_rear_grip: float = 0.6
+## Wheel roll torque. LOWER = more roll-stable (0 = won't tip); higher = leans/tips.
+@export var roll_influence: float = 0.0
 
 @export_group("Chase camera")
 @export var cam_distance: float = 6.0
@@ -131,9 +133,11 @@ func _process(delta: float) -> void:
 func _apply_grip(handbrake: bool) -> void:
 	for w in _front_wheels:
 		w.wheel_friction_slip = front_grip
+		w.wheel_roll_influence = roll_influence
 	var rg := handbrake_rear_grip if handbrake else rear_grip
 	for w in _rear_wheels:
 		w.wheel_friction_slip = rg
+		w.wheel_roll_influence = roll_influence
 
 
 # --------------------------------------------------------------------------
